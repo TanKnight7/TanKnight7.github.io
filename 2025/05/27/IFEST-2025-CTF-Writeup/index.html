@@ -30,11 +30,14 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-05-27T07:47:15.000Z">
-<meta property="article:modified_time" content="2025-05-27T09:24:25.955Z">
+<meta property="article:modified_time" content="2025-05-27T09:28:06.188Z">
 <meta property="article:author" content="Tanknight">
 <meta property="article:tag" content="nginx_misconfiguration">
 <meta property="article:tag" content="url_parser_discrepancies">
 <meta property="article:tag" content="path_traversal">
+<meta property="article:tag" content="ssti">
+<meta property="article:tag" content="ssrf">
+<meta property="article:tag" content="command_injection">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/redefine-og.webp">
     
@@ -280,7 +283,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -339,8 +342,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-05-27 16:24:25</span>
-            <span class="mobile">2025-05-27 16:24:25</span>
+            <span class="desktop">2025-05-27 16:28:06</span>
+            <span class="mobile">2025-05-27 16:28:06</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -377,6 +380,18 @@
                 
                     <li>
                         | <a href="/tags/path-traversal/">path_traversal</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/ssti/">ssti</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/ssrf/">ssrf</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/command-injection/">command_injection</a>&nbsp;
                     </li>
                 
             </ul>
@@ -462,7 +477,7 @@
                      data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img30.png"
                      
                 ></p>
-<h3 id="Orbiterzzxx"><a href="#Orbiterzzxx" class="headerlink" title="Orbiterzzxx"></a>Orbiterzzxx</h3><p>Melakukan directory fuzzing, dan menemukan file <code>/phpinfo.php</code></p>
+<h3 id="Orbiter"><a href="#Orbiter" class="headerlink" title="Orbiter"></a>Orbiter</h3><p>Melakukan directory fuzzing, dan menemukan file <code>/phpinfo.php</code></p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
@@ -646,6 +661,18 @@
 				<a href="/tags/path-traversal/">#path_traversal</a>&nbsp;
 			</li>
 			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/ssti/">#ssti</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/ssrf/">#ssrf</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/command-injection/">#command_injection</a>&nbsp;
+			</li>
+			
 		</ul>
 		
 
@@ -663,7 +690,7 @@
 	<div class="post-toc">
 		<div class="toc-title">On this page</div>
 		<div class="page-title">IFEST 2025 CTF Writeup</div>
-		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QUAL"><span class="nav-text">QUAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-V1"><span class="nav-text">Web V1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass"><span class="nav-text">Bypass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Orbiterzzxx"><span class="nav-text">Orbiterzzxx</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FINAL"><span class="nav-text">FINAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation-1"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-v2"><span class="nav-text">Web v2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PixelPlaza2"><span class="nav-text">PixelPlaza2</span></a></li></ol></li></ol></li></ol>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QUAL"><span class="nav-text">QUAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-V1"><span class="nav-text">Web V1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass"><span class="nav-text">Bypass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Orbiter"><span class="nav-text">Orbiter</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FINAL"><span class="nav-text">FINAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation-1"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-v2"><span class="nav-text">Web v2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PixelPlaza2"><span class="nav-text">PixelPlaza2</span></a></li></ol></li></ol></li></ol>
 
 	</div>
 </div>
