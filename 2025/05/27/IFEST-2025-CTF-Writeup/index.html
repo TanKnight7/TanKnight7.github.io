@@ -30,8 +30,11 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-05-27T07:47:15.000Z">
-<meta property="article:modified_time" content="2025-05-27T08:31:49.222Z">
+<meta property="article:modified_time" content="2025-05-27T08:52:05.540Z">
 <meta property="article:author" content="Tanknight">
+<meta property="article:tag" content="nginx_misconfiguration">
+<meta property="article:tag" content="url_parser_discrepancies">
+<meta property="article:tag" content="path_traversal">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/redefine-og.webp">
     
@@ -247,11 +250,11 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
@@ -306,19 +309,54 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-05-27 15:31:49</span>
-            <span class="mobile">2025-05-27 15:31:49</span>
+            <span class="desktop">2025-05-27 15:52:05</span>
+            <span class="mobile">2025-05-27 15:52:05</span>
             <span class="hover-info">Updated</span>
         </span>
     
 
     
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/National-CTF/">National CTF</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/nginx-misconfiguration/">nginx_misconfiguration</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/url-parser-discrepancies/">url_parser_discrepancies</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/path-traversal/">path_traversal</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>322 Words</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>331 Words</span>
         </span>
     
     
@@ -342,30 +380,31 @@
 
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-			<h1 id="Web-Exploitation"><a href="#Web-Exploitation" class="headerlink" title="Web Exploitation"></a>Web Exploitation</h1><h2 id="Web-v2"><a href="#Web-v2" class="headerlink" title="Web v2"></a>Web v2</h2><p><code>User(**data)</code> disini vulnerable, user bisa kasih parameter <code>is_admin=1</code> dan bisa keregister sebagai admin.</p>
+			<p>National CTF Competition organized by Atma Jaya Yogyakarta University.</p>
+<h1 id="Web-Exploitation"><a href="#Web-Exploitation" class="headerlink" title="Web Exploitation"></a>Web Exploitation</h1><h2 id="Web-v2"><a href="#Web-v2" class="headerlink" title="Web v2"></a>Web v2</h2><p><code>User(**data)</code> disini vulnerable, user bisa kasih parameter <code>is_admin=1</code> dan bisa keregister sebagai admin.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img1.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img1.png"
                      
                 ><br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img2.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img2.png"
                      
                 ></p>
 <p>Berhasil register dengan role admin.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img3.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img3.png"
                      
                 ></p>
 <p>Selanjutnya kita pengen ke <code>/admin/fetch</code> untuk melakukan SSRF, akan tetapi terdapat proteksi pada nginxnya. Ketika kita ke situ bakalan langsung di block.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img4.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img4.png"
                      
                 ></p>
 <p>Sesuai dengan source yang saya dapatkan (<a class="link"   target="_blank" rel="noopener" href="https://blog.1nf1n1ty.team/hacktricks/pentesting-web/proxy-waf-protections-bypass" >https://blog.1nf1n1ty.team/hacktricks/pentesting-web/proxy-waf-protections-bypass<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>), konfigurasi itu vulnerable dimana attacker bisa ngebypass rules tersebut dengan menambahkan special character pada requestnya.</p>
@@ -373,70 +412,70 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img5.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img5.png"
                      
                 ></p>
 <p>Tinggal bikin request di burpsuite, dan tambahkan \x85 setelah <code>/admin/fetch</code></p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img6.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img6.png"
                      
                 ></p>
 <p>Berhasil ngebypass rules nginx.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img7.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img7.png"
                      
                 ></p>
 <p>Pada saat ingin melakukan ssrf ke <code>/internal</code>, terdapat proteksi dimana url yang kita berikan akan diparse menggunakan urlparse, dan akan dicek hostnamenya.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img8.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img8.png"
                      
                 ></p>
 <p>Kita dapat membypass proteksi itu dengan memberi <code>\@daffainfo.com</code>, dimana urlparse akan menganggap hostnamenya adalah daffainfo.com.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img9.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img9.png"
                      
                 ></p>
 <p>Setelah itu akan digunakan requests.get, dimana requests.get akan menganggap <code>\@daffainfo.com</code> sebagai url path.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img10.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img10.png"
                      
                 ></p>
 <p>Sehingga kita pake path traversal saja untuk menghilangkan <code>/%5C@daffainfo.com</code> itu</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img11.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img11.png"
                      
                 ></p>
 <p>Dan berhasil solp 😀</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img12.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img12.png"
                      
                 ></p>
 <h2 id="PixelPlaza2"><a href="#PixelPlaza2" class="headerlink" title="PixelPlaza2"></a>PixelPlaza2</h2><p>Function staticHandler berikut vulnerable terhadap path traversal</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img13.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img13.png"
                      
                 ></p>
 <p>Kenapa bisa path traversal? Normalnya url itu dinormalize, tetapi jika HTTP methodnya adalah <code>CONNECT</code>, go ini tidak ngenormalize urlnya.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img14.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img14.png"
                      
                 ><br><a class="link"   target="_blank" rel="noopener" href="https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-web/golang.html?highlight=path%20traversal%20proc#connect-method" >https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-web/golang.html?highlight=path%20traversal%20proc#connect-method<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
 <p>Dengan command</p>
@@ -446,7 +485,7 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img15.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img15.png"
                      
                 ></p>
 <p>Awalnya saya mencari-cari default files, config files, &#x2F;proc&#x2F;self&#x2F;environ untuk mencari jalan menuju fleg, akan tetapi tidak membuahkan hasil.</p>
@@ -454,14 +493,14 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img16.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img16.png"
                      
                 ></p>
 <p>Nah ternyata directory docs itu ada di directory sebelumnya.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img17.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img17.png"
                      
                 ><br>Sehingga dapet deh flagnya</p>
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://103.163.139.198:8888/../docs/text&quot;</span> -X CONNECT --path-as-is</span><br></pre></td></tr></table></figure></div>
@@ -469,7 +508,7 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/ifest2025-img18.png"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img18.png"
                      
                 ></p>
 
@@ -477,6 +516,22 @@
 
 		
 
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/nginx-misconfiguration/">#nginx_misconfiguration</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/url-parser-discrepancies/">#url_parser_discrepancies</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/path-traversal/">#path_traversal</a>&nbsp;
+			</li>
+			
+		</ul>
 		
 
 		
@@ -524,7 +579,7 @@
                     </span>
                     
                         <span>
-                            322 words in total
+                            331 words in total
                         </span>
                     
                 </p>
