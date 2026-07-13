@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Tanknight Site</title>
-  <meta name="keywords" content="">
-  <meta name="description" content="Tanknight Site">
+  <title>How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame | Tanknight Site</title>
+  <meta name="keywords" content=" xss ">
+  <meta name="description" content="How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame | Tanknight Site">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="IntroductionHello! I’m Tanknight, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability researc">
 <meta property="og:type" content="website">
@@ -61,7 +61,7 @@
 
 
 <body>
-<aside class="nav mobile">
+<aside class="nav">
     <div class="nav-left">
         <a href="/"
    class="avatar_target">
@@ -301,18 +301,58 @@
 
     </div>
     <div class="hide-list">
-        <div class="semicircle" data-title="切换全屏 快捷键 s">
+        <div class="semicircle" data-title="Toggle full screen shortcut key s">
             <div class="brackets first"><</div>
             <div class="brackets">&gt;</div>
         </div>
     </div>
 </aside>
-<div id="post" class="index">
+<div id="post">
     <div class="pjax">
-        <article class="index">
-            <div class="toc-ref">
+        <article id="post-How-I-Got-Three-Nasa-Certificates-Article" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Achievements"><span class="toc-text">Achievements</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CTF-Achievements"><span class="toc-text">CTF Achievements</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bug-Bounty-Achievements"><span class="toc-text">Bug Bounty Achievements</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Certifications"><span class="toc-text">Certifications</span></a></li></ol>
+        <h1 class="article-title">How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            
+            <a class="color4">xss</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+            Created At : <time class="date" title='Updated At: 2026-07-14 04:15:59'>2026-07-14 03:57</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>Count:1.1k</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            Views 👀 :<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Information-Gathering-Phase"><span class="toc-text">Information Gathering Phase</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#First-Vulnerabilities"><span class="toc-text">First Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Second-Vulnerabilities"><span class="toc-text">Second Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Third-Vulnerabilities"><span class="toc-text">Third Vulnerabilities</span></a></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -325,36 +365,79 @@
     }
 </style>
 </div>
-            <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>Hello! I’m <strong>Tanknight</strong>, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability research, exploit development, source code review, and offensive security, with a strong focus on practical, real-world attack techniques.</p>
-<p>This website is my personal space for documenting research, sharing knowledge, publishing CTF write-ups, and exploring topics related to penetration testing, bug bounty hunting, and secure software development. I also use it to record what I learn throughout my cybersecurity journey, both as a reference for myself and as a resource for others.</p>
-<p>Whether you’re here to learn something new, follow my work, or explore technical write-ups, I hope you find the content insightful and useful.</p>
-<h1 id="Achievements"><a href="#Achievements" class="headerlink" title="Achievements"></a>Achievements</h1><h2 id="CTF-Achievements"><a href="#CTF-Achievements" class="headerlink" title="CTF Achievements"></a>CTF Achievements</h2><ul>
-<li>2nd Place at NETCOMP CTF 2026</li>
-<li>2nd Place at SCHEMATICS CTF 2025</li>
-<li>3rd Place at FESTI CTF 2025</li>
-<li>2nd Place at COMPFEST CTF 2025</li>
-<li>3rd Place at FIT CTF 2025</li>
-<li>2nd Place at IFEST CTF 2025</li>
-<li>2nd Place at CYBER SECURITY COMMUNITY CTF 2025</li>
-</ul>
-<h2 id="Bug-Bounty-Achievements"><a href="#Bug-Bounty-Achievements" class="headerlink" title="Bug Bounty Achievements"></a>Bug Bounty Achievements</h2><ul>
-<li>Identified and responsibly disclosed a <strong>Critical</strong> vulnerability in <strong>Roblox</strong> and <strong>Grab</strong>.</li>
-<li>Identified and responsibly disclosed multiple <strong>Low</strong> and <strong>Medium</strong> severity vulnerabilities across <strong>Hostinger</strong>, <strong>Grab</strong>, <strong>Roblox</strong>, <strong>SHEIN</strong>, <strong>Ubiquiti</strong>, <strong>NASA</strong>, and several <strong>Indonesian government organizations</strong>.</li>
-</ul>
-<h1 id="Certifications"><a href="#Certifications" class="headerlink" title="Certifications"></a>Certifications</h1><p>I currently hold four industry-recognized cybersecurity certifications and am actively working toward earning more.</p>
-<ul>
-<li>BSCP — Burp Suite Certified Practitioner<br><img src="/images/bscp.png" alt="BSCP"></li>
-<li>OSCP — Offensive Security Certified Professional<br><img src="/images/oscp.png" alt="OSCP"></li>
-<li>OSCP+ — Offensive Security Certified Professional+<br><img src="/images/oscp_plus.png" alt="OSCP+"></li>
-<li>OSWE — Offensive Security Web Expert</li>
-</ul>
-<blockquote>
-<p>“Security is not about knowing everything. It is about constantly learning what you don’t know.”</p>
-</blockquote>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article.png"><br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-17.png"></p>
+<h1 id="Information-Gathering-Phase"><a href="#Information-Gathering-Phase" class="headerlink" title="Information Gathering Phase"></a>Information Gathering Phase</h1><p>I was scrolling through LinkedIn and came across a post reporting reflected XSS vulnerabilities on NASA’s websites. The original creator didn’t redact the subdomains of the vulnerable site; let’s call it `<a target="_blank" rel="noopener" href="https://example.nasa.gov/">https://example.nasa.gov</a>.</p>
+<p>Curious to see if the reflected XSS vulnerabilities still existed, the first thing I did was check Wayback Machine URLs for <strong>example.nasa.gov</strong>:</p>
+<p>echo example.nasa.gov | waybackurls | urldedupe | sort -u | tee urls.txt</p>
+<p>What’s is the meaning of the code above?</p>
+<ol>
+<li><code>waybackurls</code>: Get urls from waybackurls with <code>example.nasa.gov</code></li>
+<li><code>urldedupe</code>: Filter the urls so there’s no duplicates</li>
+<li><code>sort -u</code>: Sort the urls alphabetically</li>
+<li><code>tee urls.txt</code>: the results will be saved on <code>urls.txt</code> file</li>
+</ol>
+<p>Okay, let’s say <code>urls.txt</code> file contains these links</p>
+<pre><code>
+https://example.nasa.gov/api/search/104c766f-8033-4798-bcc9-3c5cc0a00c17.jpg
+https://example.nasa.gov/api/search/iss067-s-002.jpg
+https://example.nasa.gov/api/search/latest?type=searchapp&amp;alias=searchui
+https://example.nasa.gov/console/baseattributes?index=
+https://example.nasa.gov/search/?q=all&amp;type=lsda_experiment&amp;filters=research_area.keyword|eq|Behavior%20and%20performance
+https://example.nasa.gov/explore/chartcustom?datavalues=
+</code></pre>
+<p>We will filter the URLs using <code>gf</code> tools, which will identify URLs based on possible injectable XSS parameters:</p>
+<pre><code>cat urls.txt | gf xss
+</code></pre>
+<p>Now, we have these filtered URLs:</p>
+<pre><code>https://example.nasa.gov/api/search/latest?type=searchapp&amp;alias=searchui
+https://example.nasa.gov/search/?q=all&amp;type=lsda_experiment&amp;filters=research_area.keyword|eq|Behavior%20and%20performance
+https://example.nasa.gov/explore/chartcustom?datavalues=
+</code></pre>
+<h1 id="First-Vulnerabilities"><a href="#First-Vulnerabilities" class="headerlink" title="First Vulnerabilities"></a>First Vulnerabilities</h1><p><strong>Link:</strong> <code>https://example.nasa.gov/search/?q=all&amp;type=lsda_experiment&amp;filters=research_area.keyword%7Ceq%7CBehavior+and+performance</code><br><strong>Vulnerable Parameter:</strong> filters<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-1.png"></p>
+<p>When I opened the website, the value in the <code>filters</code> parameter (i.e., <code>research_area.keyword|eq|&lt;reflected_value&gt;</code>) was reflected on the HTML page.</p>
+<p>Now, let’s try to inject HTML tags: <code>&lt;u&gt;mytextlol&lt;/u&gt;</code>.<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-2.png"></p>
+<p>It seems the backend is filtering tags? Let’s try another payload, maybe nested tags: <code>&lt;u&lt;foo&gt;&gt;mytextlol&lt;/u&lt;/foo&gt;&gt;</code>.<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-3.png"></p>
+<p>Ahh, so based on this, we can assume that if <code>&lt;</code> is inputted, it will find the closest <code>&gt;</code> and filter them out. How about this payload? <code>&lt;&lt;foo&gt;u&gt;mytextlol&lt;&lt;/foo&gt;/u&gt;</code><br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-4.png"></p>
+<p>LET’S GOOOOOO! HTML TAGS INJECTED! Now, let’s try to escalate it to Reflected XSS. Since <code>&lt;&lt;foo&gt;u&gt;mytextlol&lt;&lt;/foo&gt;/u&gt;</code> is reflected as <code>&lt;u&gt;mytextlol&lt;/u&gt;</code>, then <code>&lt;&lt;foo&gt;img src=x onerror=alert(1)&gt;mytextlol</code> should be reflected as <code>&lt;img src=x onerror=alert(1)&gt;mytextlol</code>, right? Let’s try it!<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-5.png"><br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-6.png"></p>
+<p>OMG 💀💀? FIRST BUG 😯? OOOLALALALALA, LET’S REPORT IT!! 🔥🔥<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-7.png"></p>
+<p>What actually happened there? Here’s my analysis!<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-8.png"></p>
+<h1 id="Second-Vulnerabilities"><a href="#Second-Vulnerabilities" class="headerlink" title="Second Vulnerabilities"></a>Second Vulnerabilities</h1><p><strong>Link:</strong> <code>https://example.nasa.gov/search/?q=all&amp;type=LOOOOL</code><br><strong>Vulnerable Parameter:</strong> type</p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-9.png"></p>
+<p>Okay, since this is still the same endpoint but with different parameters, the filtering system should be the same, right? If we input <code>&lt;&lt;foo&gt;u&gt;mytextlol&lt;&lt;/foo&gt;/u&gt;</code>, the text should be reflected as <code>&lt;u&gt;mytextlol&lt;/u&gt;</code>, right? Let’s give it a shot!<br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-10.png"></p>
+<p>Damn.. it’s actually a different filtering mechanism.. I was crafting many payloads but nothing seems work, i’m actually a little bit hopeless on this, but i don’t know why, when i input <code>&lt;&lt;&lt;foo&gt;u&gt;mytextlol&lt;&lt;/foo&gt;/u&gt;</code> (Only an additional <code>&lt;</code> ), suddenly..</p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-11.png"></p>
+<p>HUHH?? I ACCIDENTALLY CREATED MY OWN TAG 💀💀! This was pure luck on my part, lol. It somehow broke the filtering system and rendered my input as my own tag with an additional <code>&lt; span&gt;</code> that I didn’t even input. Well, let’s try this payload: <code>&lt;&lt;&lt;foo&gt;u&gt;img src=x onerror=alert(1)&lt;&lt;/foo&gt;/u&gt;</code>.</p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-12.png"></p>
+<p>Okay, we have successfully injected our <code>img</code> tag, but the JavaScript doesn’t execute because <code>onerror="alert(1)&lt;/span"</code> has a syntax error, so the JavaScript won’t be executed. We somehow need to make it <code>onerror="alert(1)"</code>. I came up with this genius idea for this payload: <code>&lt;&lt;&lt;foo&gt;u&gt;img src=x onerror=alert(1) lmaooooo&lt;&lt;/foo&gt;/u&gt;</code>.</p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-13.png"></p>
+<p>😎 Yep, nailed it 🥶🥶</p>
+<p>I ain’t gonna do my analysis here lol, it was pure luck, and my report got triaged!</p>
+<h1 id="Third-Vulnerabilities"><a href="#Third-Vulnerabilities" class="headerlink" title="Third Vulnerabilities"></a>Third Vulnerabilities</h1><p><strong>Link:</strong> <code>https://example.nasa.gov/explore/chartcustom?datavalues=ohmygodLmao</code><br><strong>Vulnerable Parameter:</strong> datavalues<br>![](/../images/Pasted image 20260714040404.png)</p>
+<p>Okay, this is just a blank page, lol. No way I’ll get XSS here, right?<br>Well, I was wrong. When I inspected the element…</p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-15.png"></p>
+<p>This page is seriously misconfigured — why? BECAUSE MY INPUTTED VALUE IS BEING EVALUATED AS CODE, AND IT’S ALREADY INSIDE SCRIPT TAGS! WHATTTTTTTTTTTTT!!!</p>
+<p>Normally, developers take precautions to prevent XSS vulnerabilities by doing the following:</p>
+<ol>
+<li><strong>If our input is wrapped in</strong> <code>**"**</code> <strong>or</strong> <code>**'**</code><strong>:</strong> Developers often ensure that any user input is safely enclosed within quotation marks, which helps prevent code injection. However, as hackers, we aim to break out of this string context to inject malicious code. We do this by using payloads such as <code>"&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code> or <code>'&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code>. These payloads break out of the string, allowing us to inject our own JavaScript code that gets executed.</li>
+<li><strong>If our input isn’t wrapped in</strong> <code>**"**</code> <strong>or</strong> <code>**'**</code><strong>, and the inputted value isn’t inside</strong> <code>**&lt;script&gt;**</code> <strong>tags:</strong> In this case, the input is more vulnerable, as there’s no restriction on enclosing characters, and the input could be evaluated directly. Here, we, as hackers, can inject our own HTML or JavaScript directly into the page. For example, by using a payload like <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>, we can execute arbitrary JavaScript code since it gets directly interpreted by the browser.</li>
+</ol>
+<p>But this right here is crazy 💀 — no quotation marks and it’s already between script tags!</p>
+<p>A simple payload like <code>alert(1)</code> is already enough to execute XSS: <code>https://example.nasa.gov/explore/chartcustom?datavalues=alert(1)</code></p>
+<p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-16.png"></p>
+<p>Bug reported to NASA’s VDP, and it was accepted and triaged!</p>
 
-        </article>
-        
-        
+      
+       <hr><span style="font-style: italic;color: gray;"> Please cite the source when reposting. Readers are welcome to verify the references cited in the article and point out any errors or unclear expressions. </span>
+    </div>
+</article>
+
+
+
+
+
     <div id="comments">
     <script>
         {
@@ -380,6 +463,13 @@
     </script>
 </div>
 
+
+
+    
+
+
+
+
     </div>
     <div class="copyright">
         <p class="footer-entry">
@@ -388,11 +478,11 @@
 <p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
 
     </div>
-</div>
-<div class="full-toc">
-    <button class="full" data-title="Toggle full screen shortcut key s"><span class="min "></span></button>
+    <div class="full-toc">
+        <button class="full" data-title="Toggle full screen shortcut key s"><span class="min "></span></button>
 <a class="" id="rocket" ></a>
 
+    </div>
 </div>
 
 </body>
