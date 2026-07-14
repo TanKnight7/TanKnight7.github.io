@@ -45,11 +45,11 @@
       
         <tags>
             
+            <tag> ssrf </tag>
+            
             <tag> xss </tag>
             
             <tag> file-upload </tag>
-            
-            <tag> ssrf </tag>
             
             <tag> arbitrary-file-read </tag>
             
@@ -76,9 +76,9 @@
       
         <tags>
             
-            <tag> ssrf </tag>
-            
             <tag> mass-assignment </tag>
+            
+            <tag> ssrf </tag>
             
             <tag> nginx-misconfig </tag>
             
