@@ -1,149 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
-
-
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>
-    How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame | Tanknight
-  </title>
-  <meta name="description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.
-">
-  
-  <meta name="keywords" content="
-  xss
-  ">
-  
-  <meta name="author" content="Tanknight">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Information Gathering PhaseI was scrolling through LinkedIn and came across a post reporting reflected XSS vulnerabilities on NASA’s websites. The original creator didn’t redact the subdomains of the">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame">
+<meta property="og:url" content="http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/index.html">
+<meta property="og:site_name" content="Tanknight">
+<meta property="og:description" content="Information Gathering PhaseI was scrolling through LinkedIn and came across a post reporting reflected XSS vulnerabilities on NASA’s websites. The original creator didn’t redact the subdomains of the">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-17.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-1.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-2.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-3.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-4.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-5.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-6.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-7.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-8.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-9.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-10.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-11.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-12.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-13.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-15.png">
+<meta property="og:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article-16.png">
+<meta property="article:published_time" content="2026-07-13T20:57:33.000Z">
+<meta property="article:modified_time" content="2026-07-14T02:33:51.161Z">
+<meta property="article:author" content="Tanknight">
+<meta property="article:tag" content="xss">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tanknight.blog/images/How-I-Got-Three-Nasa-Certificates-Article.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
 
-  <meta http-equiv="Cache-Control" content="no-transform"/>
-  <meta http-equiv="Cache-Control" content="no-siteapp">
-  <meta name="theme-color" content="#1e2327">
-  <link rel="apple-touch-icon" href="https://github.githubassets.com/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://github.githubassets.com/apple-touch-icon-180x180.png">
 
-  <link rel="icon" type="image/x-icon" href="https://github.githubassets.com/favicon.ico">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+    <!-- Umami Analytics -->
 
-  
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 8.1.2">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
 <link rel="alternate" href="/atom.xml" title="Tanknight" type="application/atom+xml">
 </head>
 
-<body id="replica-app">
-
-<nav class="navbar-wrapper">
-  <div class="navbar">
-    <div class="container clearfix">
-      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
-
-      <div class="navbar-search float-left desktop-only">
-        <div class="navbar-search-form">
-          <label for="gsc-i-id1">This website</label>
-          <div id="google-search">
-            <gcse:search></gcse:search>
-          </div>
-        </div>
-      </div>
-
-      <ul class="navbar-nav float-left">
-        
-        <li><a href="/">Archives</a></li>
-        
-        
-        <li><a href="/">Categories</a></li>
-        
-        
-        <li><a href="/">Tags</a></li>
-        
-        
-        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
-        
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/writeups">writeups</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li><!--
+     -->
       </ul>
-
-      <ul class="navbar-nav user-nav float-right desktop-only">
-        <li class="user-nav-notification">
-          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
-        </li>
-        <li>
-          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
-        </li>
-        <li class="user-nav-logo">
-          <a><img src="https://octodex.github.com/images/baracktocat.jpg"> <i class="fa fa-caret-down"></i></i></a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="main-container">
-  <header class="header-wrapper desktop-only">
-  <div class="container header-site-detail">
-    <ul class="header-toolbar">
-      <li class="clearfix">
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-file-text"></i> Posts </a>
-        <a href="/"
-           class="header-toolbar-right"> 3 </a>
-      </li>
-      <li>
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-tags"></i> Tags </a>
-        <a href="/"
-           class="header-toolbar-right"> 10 </a>
-      </li>
-      <li>
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-folder-open"></i> Categories </a>
-        <a href="/"
-           class="header-toolbar-right"> 2 </a>
-      </li>
-    </ul>
-    <h2 class="header-title">
-      <i class="fa fa-book text-muted"></i>
-      <a href="/">Tanknight</a>
-      
-      
-    </h2>
-  </div>
-
-  <div class="container">
-    <div class="header-tab-wrapper clearfix">
-      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
-      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
-      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
-      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
-      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
-    </div>
-  </div>
-</header>
-
-
-<div class="post-container container">
-  <h3>
-    <i class="fa fa-user-o"></i>
-    Tanknight
-
-    <span class="post-date float-right" title="{{moment(1783976253000).format('MMM DD, YYYY, h:mm:ss A')}}">
-      
-          <i class="fa fa-pencil-square-o"></i>
-      
-      {{moment(1783976253000).fromNow()}}
     </span>
-  </h3>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2026/07/14/ACECTF-2025-Writeup/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&text=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&is_video=false&description=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame&body=Check out this article: http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&name=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&t=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
 
-  <article class="post-content">
-    <h1>How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame</h1>
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Information-Gathering-Phase"><span class="toc-number">1.</span> <span class="toc-text">Information Gathering Phase</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#First-Vulnerabilities"><span class="toc-number">2.</span> <span class="toc-text">First Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Second-Vulnerabilities"><span class="toc-number">3.</span> <span class="toc-text">Second Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Third-Vulnerabilities"><span class="toc-number">4.</span> <span class="toc-text">Third Vulnerabilities</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Tanknight</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-07-13T20:57:33.000Z" class="dt-published" itemprop="datePublished">2026-07-14</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/bugbounties/">bugbounties</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/xss/" rel="tag">xss</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
     <p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article.png"><br><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-17.png"></p>
 <h1 id="Information-Gathering-Phase"><a href="#Information-Gathering-Phase" class="headerlink" title="Information Gathering Phase"></a>Information Gathering Phase</h1><p>I was scrolling through LinkedIn and came across a post reporting reflected XSS vulnerabilities on NASA’s websites. The original creator didn’t redact the subdomains of the vulnerable site; let’s call it `<a target="_blank" rel="noopener" href="https://example.nasa.gov/">https://example.nasa.gov</a>.</p>
 <p>Curious to see if the reflected XSS vulnerabilities still existed, the first thing I did was check Wayback Machine URLs for <strong>example.nasa.gov</strong>:</p>
@@ -205,41 +247,147 @@ https://example.nasa.gov/explore/chartcustom?datavalues=
 <p><img src="/../images/How-I-Got-Three-Nasa-Certificates-Article-16.png"></p>
 <p>Bug reported to NASA’s VDP, and it was accepted and triaged!</p>
 
-  </article>
-</div>
+  </div>
+</article>
 
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about">About</a></li>
+        
+          <li><a href="/categories/writeups">writeups</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li>
+        
+      </ul>
+    </div>
 
     
-
-
-
-
-</div>
-
-<div class="footer-wrapper container">
-  <footer class="footer clearfix">
-    <div class="clearfix">
-    <a href="http://TanKnight7.github.io" class="footer-logo">
-      <i class="fa fa-github"></i>
-    </a>
-    <ul class="footer-social-link">
-      <li>© 2019 Tanknight</li>
-      <li><a href="http://TanKnight7.github.io">Home</a></li>
-      
-    </ul>
-    <div class="footer-theme-info">
-      Theme <a target="_blank" rel="noopener" href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
-      by <a target="_blank" rel="noopener" href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
-    </div>
-    </div>
     
-  </footer>
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Information-Gathering-Phase"><span class="toc-number">1.</span> <span class="toc-text">Information Gathering Phase</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#First-Vulnerabilities"><span class="toc-number">2.</span> <span class="toc-text">First Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Second-Vulnerabilities"><span class="toc-number">3.</span> <span class="toc-text">Second Vulnerabilities</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Third-Vulnerabilities"><span class="toc-number">4.</span> <span class="toc-text">Third Vulnerabilities</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&text=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&is_video=false&description=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame&body=Check out this article: http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&title=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&name=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://tanknight.blog/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/&t=How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
 </div>
 
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Tanknight
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/writeups">writeups</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
 
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
 
 <script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
 
 </body>
 </html>

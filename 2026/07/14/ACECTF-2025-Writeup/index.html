@@ -1,149 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
-
-
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>
-    ACE CTF 2025 Writeup | Tanknight
-  </title>
-  <meta name="description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.
-">
-  
-  <meta name="keywords" content="
-  ssrf,xss,file-upload,arbitrary-file-read
-  ">
-  
-  <meta name="author" content="Tanknight">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="ShareITStep 1: Where is the Flag?Looking at the provided files, the location of the flag was completely unknown—whether it was stored in a file or a variable, it literally wasn’t there. So I asked the">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACE CTF 2025 Writeup">
+<meta property="og:url" content="http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/index.html">
+<meta property="og:site_name" content="Tanknight">
+<meta property="og:description" content="ShareITStep 1: Where is the Flag?Looking at the provided files, the location of the flag was completely unknown—whether it was stored in a file or a variable, it literally wasn’t there. So I asked the">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-1.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-2.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-3.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-4.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-5.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-6.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-7.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-8.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-9.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-10.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-11.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-12.png">
+<meta property="og:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup-13.png">
+<meta property="article:published_time" content="2026-07-13T19:30:53.000Z">
+<meta property="article:modified_time" content="2026-07-13T20:17:13.135Z">
+<meta property="article:author" content="Tanknight">
+<meta property="article:tag" content="arbitrary-file-read">
+<meta property="article:tag" content="file-upload">
+<meta property="article:tag" content="ssrf">
+<meta property="article:tag" content="xss">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tanknight.blog/images/ACECTF-2025-Writeup.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ACE CTF 2025 Writeup</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
 
-  <meta http-equiv="Cache-Control" content="no-transform"/>
-  <meta http-equiv="Cache-Control" content="no-siteapp">
-  <meta name="theme-color" content="#1e2327">
-  <link rel="apple-touch-icon" href="https://github.githubassets.com/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://github.githubassets.com/apple-touch-icon-180x180.png">
 
-  <link rel="icon" type="image/x-icon" href="https://github.githubassets.com/favicon.ico">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+    <!-- Umami Analytics -->
 
-  
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 8.1.2">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
 <link rel="alternate" href="/atom.xml" title="Tanknight" type="application/atom+xml">
 </head>
 
-<body id="replica-app">
-
-<nav class="navbar-wrapper">
-  <div class="navbar">
-    <div class="container clearfix">
-      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
-
-      <div class="navbar-search float-left desktop-only">
-        <div class="navbar-search-form">
-          <label for="gsc-i-id1">This website</label>
-          <div id="google-search">
-            <gcse:search></gcse:search>
-          </div>
-        </div>
-      </div>
-
-      <ul class="navbar-nav float-left">
-        
-        <li><a href="/">Archives</a></li>
-        
-        
-        <li><a href="/">Categories</a></li>
-        
-        
-        <li><a href="/">Tags</a></li>
-        
-        
-        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
-        
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/writeups">writeups</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li><!--
+     -->
       </ul>
-
-      <ul class="navbar-nav user-nav float-right desktop-only">
-        <li class="user-nav-notification">
-          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
-        </li>
-        <li>
-          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
-        </li>
-        <li class="user-nav-logo">
-          <a><img src="https://octodex.github.com/images/baracktocat.jpg"> <i class="fa fa-caret-down"></i></i></a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="main-container">
-  <header class="header-wrapper desktop-only">
-  <div class="container header-site-detail">
-    <ul class="header-toolbar">
-      <li class="clearfix">
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-file-text"></i> Posts </a>
-        <a href="/"
-           class="header-toolbar-right"> 3 </a>
-      </li>
-      <li>
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-tags"></i> Tags </a>
-        <a href="/"
-           class="header-toolbar-right"> 10 </a>
-      </li>
-      <li>
-        <a href="/" class="header-toolbar-left"><i
-                  class="fa fa-folder-open"></i> Categories </a>
-        <a href="/"
-           class="header-toolbar-right"> 2 </a>
-      </li>
-    </ul>
-    <h2 class="header-title">
-      <i class="fa fa-book text-muted"></i>
-      <a href="/">Tanknight</a>
-      
-      
-    </h2>
-  </div>
-
-  <div class="container">
-    <div class="header-tab-wrapper clearfix">
-      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
-      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
-      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
-      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
-      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
-    </div>
-  </div>
-</header>
-
-
-<div class="post-container container">
-  <h3>
-    <i class="fa fa-user-o"></i>
-    Tanknight
-
-    <span class="post-date float-right" title="{{moment(1783971053000).format('MMM DD, YYYY, h:mm:ss A')}}">
-      
-          <i class="fa fa-pencil-square-o"></i>
-      
-      {{moment(1783971053000).fromNow()}}
     </span>
-  </h3>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2026/07/13/IFEST-2025-CTF-Writeup/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&text=ACE CTF 2025 Writeup"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&is_video=false&description=ACE CTF 2025 Writeup"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ACE CTF 2025 Writeup&body=Check out this article: http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&name=ACE CTF 2025 Writeup&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&t=ACE CTF 2025 Writeup"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
 
-  <article class="post-content">
-    <h1>ACE CTF 2025 Writeup</h1>
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ShareIT"><span class="toc-number">1.</span> <span class="toc-text">ShareIT</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Where-is-the-Flag"><span class="toc-number">1.1.</span> <span class="toc-text">Step 1: Where is the Flag?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Privillege-Escallation-to-Admin"><span class="toc-number">1.2.</span> <span class="toc-text">Step 2: Privillege Escallation to Admin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-File-Upload-to-Stored-XSS"><span class="toc-number">1.3.</span> <span class="toc-text">Step 3: File Upload to Stored XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Get-debug-mode-true-JWT-Token-via-XSS-SSRF"><span class="toc-number">1.4.</span> <span class="toc-text">Step 4: Get debug_mode&#x3D;true JWT Token via XSS + SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-5-Local-File-Read"><span class="toc-number">1.5.</span> <span class="toc-text">Step 5: Local File Read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-6-Directory-Listing-via-View-source-Protocol"><span class="toc-number">1.6.</span> <span class="toc-text">Step 6: Directory Listing via View-source Protocol</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Velixs-com-PCS"><span class="toc-number">2.</span> <span class="toc-text">Velixs.com - PCS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Finding-the-Flag-Location"><span class="toc-number">2.1.</span> <span class="toc-text">Step 1: Finding the Flag Location</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Huh-A-Bot-Could-it-Be-XSS"><span class="toc-number">2.2.</span> <span class="toc-text">Step 2: Huh? A Bot?? Could it Be XSS??</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-Blind-XSS"><span class="toc-number">2.3.</span> <span class="toc-text">Step 3: Blind XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Blind-XSS-to-PHP-File-Upload-to-RCE"><span class="toc-number">2.4.</span> <span class="toc-text">Step 4: Blind XSS to PHP File Upload to RCE</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ACE CTF 2025 Writeup
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Tanknight</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-07-13T19:30:53.000Z" class="dt-published" itemprop="datePublished">2026-07-14</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/writeups/">writeups</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/arbitrary-file-read/" rel="tag">arbitrary-file-read</a>, <a class="p-category" href="/tags/file-upload/" rel="tag">file-upload</a>, <a class="p-category" href="/tags/ssrf/" rel="tag">ssrf</a>, <a class="p-category" href="/tags/xss/" rel="tag">xss</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
     <h1 id="ShareIT"><a href="#ShareIT" class="headerlink" title="ShareIT"></a>ShareIT</h1><h2 id="Step-1-Where-is-the-Flag"><a href="#Step-1-Where-is-the-Flag" class="headerlink" title="Step 1: Where is the Flag?"></a>Step 1: Where is the Flag?</h2><p>Looking at the provided files, the location of the flag was completely unknown—whether it was stored in a file or a variable, it literally wasn’t there. So I asked the challenge author, and it turned out the flag is located in the root directory (<code>/</code>) with the filename <code>&lt;random_str&gt;.txt</code>.</p>
 <h2 id="Step-2-Privillege-Escallation-to-Admin"><a href="#Step-2-Privillege-Escallation-to-Admin" class="headerlink" title="Step 2: Privillege Escallation to Admin"></a>Step 2: Privillege Escallation to Admin</h2><p>Register at <code>/api/auth/register</code><br><img src="/images/ACECTF-2025-Writeup.png"></p>
 <p>Login at <code>/api/auth/login</code><br><img src="/images/ACECTF-2025-Writeup-1.png"></p>
@@ -763,41 +807,147 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port=PORT)
 </code></pre>
 
-  </article>
-</div>
+  </div>
+</article>
 
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about">About</a></li>
+        
+          <li><a href="/categories/writeups">writeups</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li>
+        
+      </ul>
+    </div>
 
     
-
-
-
-
-</div>
-
-<div class="footer-wrapper container">
-  <footer class="footer clearfix">
-    <div class="clearfix">
-    <a href="http://TanKnight7.github.io" class="footer-logo">
-      <i class="fa fa-github"></i>
-    </a>
-    <ul class="footer-social-link">
-      <li>© 2019 Tanknight</li>
-      <li><a href="http://TanKnight7.github.io">Home</a></li>
-      
-    </ul>
-    <div class="footer-theme-info">
-      Theme <a target="_blank" rel="noopener" href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
-      by <a target="_blank" rel="noopener" href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
-    </div>
-    </div>
     
-  </footer>
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ShareIT"><span class="toc-number">1.</span> <span class="toc-text">ShareIT</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Where-is-the-Flag"><span class="toc-number">1.1.</span> <span class="toc-text">Step 1: Where is the Flag?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Privillege-Escallation-to-Admin"><span class="toc-number">1.2.</span> <span class="toc-text">Step 2: Privillege Escallation to Admin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-File-Upload-to-Stored-XSS"><span class="toc-number">1.3.</span> <span class="toc-text">Step 3: File Upload to Stored XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Get-debug-mode-true-JWT-Token-via-XSS-SSRF"><span class="toc-number">1.4.</span> <span class="toc-text">Step 4: Get debug_mode&#x3D;true JWT Token via XSS + SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-5-Local-File-Read"><span class="toc-number">1.5.</span> <span class="toc-text">Step 5: Local File Read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-6-Directory-Listing-via-View-source-Protocol"><span class="toc-number">1.6.</span> <span class="toc-text">Step 6: Directory Listing via View-source Protocol</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Velixs-com-PCS"><span class="toc-number">2.</span> <span class="toc-text">Velixs.com - PCS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Finding-the-Flag-Location"><span class="toc-number">2.1.</span> <span class="toc-text">Step 1: Finding the Flag Location</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Huh-A-Bot-Could-it-Be-XSS"><span class="toc-number">2.2.</span> <span class="toc-text">Step 2: Huh? A Bot?? Could it Be XSS??</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-Blind-XSS"><span class="toc-number">2.3.</span> <span class="toc-text">Step 3: Blind XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Blind-XSS-to-PHP-File-Upload-to-RCE"><span class="toc-number">2.4.</span> <span class="toc-text">Step 4: Blind XSS to PHP File Upload to RCE</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&text=ACE CTF 2025 Writeup"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&is_video=false&description=ACE CTF 2025 Writeup"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ACE CTF 2025 Writeup&body=Check out this article: http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&title=ACE CTF 2025 Writeup"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&name=ACE CTF 2025 Writeup&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://tanknight.blog/2026/07/14/ACECTF-2025-Writeup/&t=ACE CTF 2025 Writeup"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
 </div>
 
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Tanknight
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/writeups">writeups</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/TanKnight7">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
 
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
 
 <script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
 
 </body>
 </html>
