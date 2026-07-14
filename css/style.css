@@ -967,6 +967,7 @@
   color: inherit;
   position: relative;
   padding-right: 5px;
+  box-sizing: border-box;
 }
 .nav-right .title-list nav a:before,
 .nav-right .title-list #local-search-result a:before {
@@ -988,14 +989,14 @@
 }
 .nav-right .title-list nav a .post-title,
 .nav-right .title-list #local-search-result a .post-title {
+  flex: 1;
+  min-width: 0;
   width: -webkit-calc(100% - 155px);
   width: -moz-calc(100% - 155px);
   width: calc(100% - 155px);
   float: left;
   clear: both;
   margin: 5px 0;
-  flex: 1;
-  min-width: 0;
   padding-left: 32px;
   font-size: 16px;
   line-height: 22px;
