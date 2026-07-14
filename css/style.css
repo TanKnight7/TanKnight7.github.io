@@ -960,10 +960,13 @@
 }
 .nav-right .title-list nav a,
 .nav-right .title-list #local-search-result a {
-  display: block;
-  height: 32px;
+  display: flex;
+  align-items: flex-start;
+  min-height: 32px;
+  height: auto;
   color: inherit;
   position: relative;
+  padding-right: 5px;
 }
 .nav-right .title-list nav a:before,
 .nav-right .title-list #local-search-result a:before {
@@ -991,14 +994,13 @@
   float: left;
   clear: both;
   margin: 5px 0;
+  flex: 1;
+  min-width: 0;
   padding-left: 32px;
   font-size: 16px;
   line-height: 22px;
-  white-space: nowrap;
   text-decoration: none;
-  text-overflow: ellipsis;
   color: #55606f;
-  overflow: hidden;
   outline: none;
 }
 .nav-right .title-list nav a .post-title .search-keyword,
@@ -1008,6 +1010,9 @@
 }
 .nav-right .title-list nav a .post-date,
 .nav-right .title-list #local-search-result a .post-date {
+  width: 90px;
+  flex-shrink: 0;
+  text-align: right;
   font-size: 15px;
   margin: 8px 0;
   padding-right: 3px;
