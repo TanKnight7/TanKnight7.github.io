@@ -36,8 +36,8 @@
       <name>Tanknight</name>
     </author>
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
-    <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
     <category term="xss" scheme="http://tanknight.blog/tags/xss/"/>
+    <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
     <category term="file-upload" scheme="http://tanknight.blog/tags/file-upload/"/>
     <category term="arbitrary-file-read" scheme="http://tanknight.blog/tags/arbitrary-file-read/"/>
     <content>
