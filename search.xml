@@ -20,11 +20,11 @@
       
         <tags>
             
+            <tag> xss </tag>
+            
             <tag> css-injection </tag>
             
             <tag> idor </tag>
-            
-            <tag> xss </tag>
             
             <tag> csp-bypass </tag>
             
@@ -72,11 +72,11 @@
       
         <tags>
             
-            <tag> command-injection </tag>
-            
             <tag> sandbox-escape </tag>
             
             <tag> wordpress </tag>
+            
+            <tag> command-injection </tag>
             
         </tags>
       
@@ -178,13 +178,13 @@
             
             <tag> ssrf </tag>
             
+            <tag> command-injection </tag>
+            
             <tag> mass-assignment </tag>
             
             <tag> nginx-misconfig </tag>
             
             <tag> ssti </tag>
-            
-            <tag> command-injection </tag>
             
             <tag> parser-discrepancies </tag>
             
