@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <title>Cyber Jawara CTF 2025 Writeup | Tanknight</title>
-  <meta name="keywords" content=" xss , css-injection , idor , csp-bypass , prototype-pollution , iframe-sandbox-bypass , dom-clobeering , dompurify-bypass ">
+  <meta name="keywords" content=" css-injection , idor , xss , csp-bypass , prototype-pollution , iframe-sandbox-bypass , dom-clobeering , dompurify-bypass ">
   <meta name="description" content="Cyber Jawara CTF 2025 Writeup | Tanknight">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="description" content="IntroductionHello! I’m Tanknight, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability researc">
+<meta name="description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Tanknight">
-<meta property="og:url" content="http://tanknight.blog/about/index.html">
+<meta property="og:title" content="Tags">
+<meta property="og:url" content="http://tanknight.blog/tags/index.html">
 <meta property="og:site_name" content="Tanknight">
-<meta property="og:description" content="IntroductionHello! I’m Tanknight, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability researc">
+<meta property="og:description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-07-15T23:55:28.889Z">
-<meta property="article:modified_time" content="2026-07-15T23:55:07.120Z">
+<meta property="article:published_time" content="2026-07-13T13:35:54.000Z">
+<meta property="article:modified_time" content="2026-07-13T13:36:11.689Z">
 <meta property="article:author" content="Tanknight">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Linux">
@@ -57,9 +57,9 @@
 
 <script src="/js/iconfont.js?v=1.1.0" ></script>
 
-<meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Tanknight" type="application/atom+xml">
-
+<meta name="generator" content="Hexo 8.1.2">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Tanknight" type="application/atom+xml">
 </head>
 <div style="display: none">
   <input class="theme_disqus_on" value="false">
@@ -226,8 +226,8 @@
         
     </div>
 </div>
-<input type="hidden" id="yelog_site_posts_number" value="7">
-<input type="hidden" id="yelog_site_word_count" value="11.6k">
+<input type="hidden" id="yelog_site_posts_number" value="8">
+<input type="hidden" id="yelog_site_word_count" value="12.3k">
 <div style="display: none">
     <span id="busuanzi_value_site_uv"></span>
     <span id="busuanzi_value_site_pv"></span>
@@ -361,8 +361,17 @@
         
         
         <a  class="All writeups "
+           href="/2026/07/16/Hack-Today-CTF-2025-Writeup/"
+           data-tag="ssrf,arbitrary-file-read,ssti"
+           data-author="" >
+            <span class="post-title" title="Hack Today CTF 2025 Writeup">Hack Today CTF 2025 Writeup</span>
+            <span class="post-date" title="2026-07-16 07:37:35">2026/07/16</span>
+        </a>
+        
+        
+        <a  class="All writeups "
            href="/2026/07/16/Cyber-Jawara-CTF-2025-Writeup/"
-           data-tag="xss,css-injection,idor,csp-bypass,prototype-pollution,iframe-sandbox-bypass,dom-clobeering,dompurify-bypass"
+           data-tag="css-injection,idor,xss,csp-bypass,prototype-pollution,iframe-sandbox-bypass,dom-clobeering,dompurify-bypass"
            data-author="" >
             <span class="post-title" title="Cyber Jawara CTF 2025 Writeup">Cyber Jawara CTF 2025 Writeup</span>
             <span class="post-date" title="2026-07-16 06:51:19">2026/07/16</span>
@@ -382,7 +391,7 @@
            href="/2026/07/14/SCHEMATICSCTF-2025-Writeup/"
            data-tag="command-injection,sandbox-escape,wordpress"
            data-author="" >
-            <span class="post-title" title="SCHEMATICS CTF 2025 Writeup">SCHEMATICS CTF 2025 Writeup</span>
+            <span class="post-title" title="Schematics CTF 2025 Writeup">Schematics CTF 2025 Writeup</span>
             <span class="post-date" title="2026-07-14 22:07:50">2026/07/14</span>
         </a>
         
@@ -416,7 +425,7 @@
         
         <a  class="All writeups "
            href="/2026/07/13/IFEST-2025-CTF-Writeup/"
-           data-tag="ssrf,mass-assignment,nginx-misconfig,ssti,command-injection,parser-discrepancies,path-traversal"
+           data-tag="ssrf,ssti,mass-assignment,nginx-misconfig,command-injection,parser-discrepancies,path-traversal"
            data-author="" >
             <span class="post-title" title="IFEST CTF 2025 Writeup">IFEST CTF 2025 Writeup</span>
             <span class="post-date" title="2026-07-13 22:01:00">2026/07/13</span>
@@ -460,11 +469,11 @@
         <span class="tag">
             <i class="iconfont icon-tag"></i>
             
-            <a class="color4">xss</a>
-            
             <a class="color4">css-injection</a>
             
             <a class="color5">idor</a>
+            
+            <a class="color4">xss</a>
             
             <a class="color1">csp-bypass</a>
             

