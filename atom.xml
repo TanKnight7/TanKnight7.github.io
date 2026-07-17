@@ -101,10 +101,10 @@
       <name>Tanknight</name>
     </author>
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
-    <category term="xss" scheme="http://tanknight.blog/tags/xss/"/>
-    <category term="csp-bypass" scheme="http://tanknight.blog/tags/csp-bypass/"/>
     <category term="css-injection" scheme="http://tanknight.blog/tags/css-injection/"/>
     <category term="idor" scheme="http://tanknight.blog/tags/idor/"/>
+    <category term="xss" scheme="http://tanknight.blog/tags/xss/"/>
+    <category term="csp-bypass" scheme="http://tanknight.blog/tags/csp-bypass/"/>
     <category term="prototype-pollution" scheme="http://tanknight.blog/tags/prototype-pollution/"/>
     <category term="iframe-sandbox-bypass" scheme="http://tanknight.blog/tags/iframe-sandbox-bypass/"/>
     <category term="dom-clobeering" scheme="http://tanknight.blog/tags/dom-clobeering/"/>
@@ -201,8 +201,8 @@
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
     <category term="command-injection" scheme="http://tanknight.blog/tags/command-injection/"/>
     <category term="django-ssti" scheme="http://tanknight.blog/tags/django-ssti/"/>
-    <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
     <category term="mass-assignment" scheme="http://tanknight.blog/tags/mass-assignment/"/>
+    <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
     <category term="nginx-misconfig" scheme="http://tanknight.blog/tags/nginx-misconfig/"/>
     <category term="parser-discrepancies" scheme="http://tanknight.blog/tags/parser-discrepancies/"/>
     <category term="path-traversal" scheme="http://tanknight.blog/tags/path-traversal/"/>
