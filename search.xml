@@ -275,9 +275,9 @@
             
             <tag> django-ssti </tag>
             
-            <tag> mass-assignment </tag>
-            
             <tag> ssrf </tag>
+            
+            <tag> mass-assignment </tag>
             
             <tag> nginx-misconfig </tag>
             

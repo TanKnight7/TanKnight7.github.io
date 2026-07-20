@@ -201,8 +201,8 @@
     <category term="writeups" scheme="http://tanknight.blog/categories/writeups/"/>
     <category term="command-injection" scheme="http://tanknight.blog/tags/command-injection/"/>
     <category term="django-ssti" scheme="http://tanknight.blog/tags/django-ssti/"/>
-    <category term="mass-assignment" scheme="http://tanknight.blog/tags/mass-assignment/"/>
     <category term="ssrf" scheme="http://tanknight.blog/tags/ssrf/"/>
+    <category term="mass-assignment" scheme="http://tanknight.blog/tags/mass-assignment/"/>
     <category term="nginx-misconfig" scheme="http://tanknight.blog/tags/nginx-misconfig/"/>
     <category term="parser-discrepancies" scheme="http://tanknight.blog/tags/parser-discrepancies/"/>
     <category term="path-traversal" scheme="http://tanknight.blog/tags/path-traversal/"/>
